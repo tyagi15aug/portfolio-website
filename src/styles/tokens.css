@@ -1,0 +1,103 @@
+/*
+  Design tokens.
+  Palette: Anthropic-style warm neutrals (oat/cream + near-black ink) plus
+  two accents — the signature clay/terracotta, and a deep olive-green added
+  to complement it (cooler, equally muted, same warmth family).
+  Type: Sora (geometric display, referencing scribdinc.com's Neuecampton)
+  + IBM Plex Sans (body) + IBM Plex Mono (labels/dates/tags).
+*/
+
+:root {
+  /* ---- Type ---- */
+  --font-display: 'Sora', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* ---- Neutrals (light) ---- */
+  --bg: #f6f2ec;
+  --surface: #ffffff;
+  --surface-2: #efeade;
+  --ink: #171310;
+  --muted: #625d53;
+  --faint: #9c9587;
+  --border: #e2dccf;
+  --border-strong: #d0c9b8;
+
+  /* ---- Accent 1: clay / terracotta ---- */
+  --terracotta: #c1602f;
+  --terracotta-fill: #d97757;
+  --terracotta-ink: #ffffff;
+
+  /* ---- Accent 2: olive / forest green (complements terracotta) ---- */
+  --green: #3f5232;
+  --green-fill: #56693f;
+  --green-ink: #ffffff;
+
+  /* ---- Status semantics ---- */
+  --live-bg: #e4e9da;
+  --live: #3f5232;
+  --dev-bg: #f6e6cf;
+  --dev: #9a5b23;
+  --planned-bg: #ede8dc;
+  --planned: #756f62;
+
+  /* ---- Shape / spacing ---- */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --content-width: 780px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #16130f;
+    --surface: #1e1a15;
+    --surface-2: #26221b;
+    --ink: #f4f0e6;
+    --muted: #a79f8f;
+    --faint: #74695a;
+    --border: #322c22;
+    --border-strong: #443c2e;
+
+    --terracotta: #e58b5c;
+    --terracotta-fill: #d97757;
+    --terracotta-ink: #16130f;
+
+    --green: #94ac78;
+    --green-fill: #6e8557;
+    --green-ink: #16130f;
+
+    --live-bg: #24301e;
+    --live: #9ac17c;
+    --dev-bg: #34280f;
+    --dev: #e3a85b;
+    --planned-bg: #29251d;
+    --planned: #a79f8f;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #16130f;
+  --surface: #1e1a15;
+  --surface-2: #26221b;
+  --ink: #f4f0e6;
+  --muted: #a79f8f;
+  --faint: #74695a;
+  --border: #322c22;
+  --border-strong: #443c2e;
+
+  --terracotta: #e58b5c;
+  --terracotta-fill: #d97757;
+  --terracotta-ink: #16130f;
+
+  --green: #94ac78;
+  --green-fill: #6e8557;
+  --green-ink: #16130f;
+
+  --live-bg: #24301e;
+  --live: #9ac17c;
+  --dev-bg: #34280f;
+  --dev: #e3a85b;
+  --planned-bg: #29251d;
+  --planned: #a79f8f;
+}

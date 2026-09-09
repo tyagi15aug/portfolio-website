@@ -1,0 +1,163 @@
+.hero {
+  position: relative;
+  padding-top: 64px;
+  overflow: hidden;
+}
+
+/* Soft radial glow behind the name — a restrained nod to the bold circular
+   mark in the ink-painting reference, not a literal reproduction. */
+.glow {
+  position: absolute;
+  top: -120px;
+  right: -140px;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--terracotta-fill) 0%, transparent 70%);
+  opacity: 0.16;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--terracotta);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 18px 0;
+}
+
+.name {
+  font-size: clamp(36px, 6.5vw, 50px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px 0;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.role {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--green);
+  margin: 0 0 22px 0;
+}
+
+.summary {
+  font-size: 15.5px;
+  line-height: 1.65;
+  color: var(--ink);
+  max-width: 60ch;
+  margin: 0 0 28px 0;
+}
+
+.statRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.statValue {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--terracotta);
+}
+
+.statLabel {
+  font-size: 12px;
+  color: var(--faint);
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+
+.linkRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 4px;
+  border-top: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  appearance: none;
+  transition: padding-left 0.15s ease, color 0.15s ease;
+}
+
+.links .linkRow:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.linkRow:hover {
+  padding-left: 10px;
+  color: var(--terracotta);
+}
+
+.linkRow:focus-visible {
+  outline: 2px solid var(--terracotta);
+  outline-offset: -2px;
+}
+
+.linkLabel {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.linkName {
+  font-size: 16px;
+  font-weight: 600;
+  font-family: var(--font-display);
+}
+
+.linkSub {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--faint);
+}
+
+.linkRow:hover .linkSub {
+  color: var(--terracotta);
+  opacity: 0.75;
+}
+
+.arrow {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  stroke: var(--faint);
+  transition: stroke 0.15s ease, transform 0.15s ease;
+}
+
+.linkRow:hover .arrow {
+  stroke: var(--terracotta);
+  transform: translate(2px, -2px);
+}

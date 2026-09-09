@@ -1,0 +1,43 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 9px 3px 7px;
+  border-radius: 100px;
+  width: fit-content;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.live {
+  background: var(--live-bg);
+  color: var(--live);
+}
+.live .dot {
+  background: var(--live);
+}
+
+.inDevelopment {
+  background: var(--dev-bg);
+  color: var(--dev);
+}
+.inDevelopment .dot {
+  background: var(--dev);
+}
+
+.planned {
+  background: var(--planned-bg);
+  color: var(--planned);
+}
+.planned .dot {
+  background: var(--planned);
+}
