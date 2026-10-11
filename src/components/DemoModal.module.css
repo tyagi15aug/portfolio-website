@@ -1,0 +1,160 @@
+.backdrop {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: color-mix(in srgb, var(--ink) 52%, transparent);
+}
+
+.modal {
+  display: flex;
+  width: min(1180px, 100%);
+  max-height: calc(100dvh - 40px);
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: 0 24px 80px color-mix(in srgb, var(--ink) 26%, transparent);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.eyebrow {
+  margin-bottom: 3px;
+  color: var(--terracotta);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.header h2 {
+  font-size: 20px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.openLink,
+.close {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-decoration: none;
+}
+
+.close {
+  display: grid;
+  width: 32px;
+  height: 30px;
+  place-items: center;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 22px;
+  line-height: 1;
+}
+
+.openLink:hover,
+.close:hover {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.openLink svg {
+  width: 13px;
+  height: 13px;
+  stroke: currentColor;
+}
+
+.context {
+  padding: 11px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.context strong {
+  color: var(--ink);
+}
+
+.context a {
+  color: var(--green);
+}
+
+.frameWrap {
+  min-height: 360px;
+  flex: 1;
+  background: var(--surface-2);
+}
+
+.frame {
+  display: block;
+  width: 100%;
+  height: min(72dvh, 780px);
+  border: 0;
+  background: var(--surface);
+}
+
+.fallback {
+  padding: 10px 20px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.fallback a {
+  color: var(--green);
+}
+
+@media (max-width: 640px) {
+  .backdrop {
+    padding: 0;
+  }
+
+  .modal {
+    max-height: 100dvh;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .header {
+    align-items: flex-start;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .openLink {
+    white-space: nowrap;
+  }
+
+  .frame {
+    height: 66dvh;
+  }
+}

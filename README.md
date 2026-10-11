@@ -39,6 +39,11 @@ only the relevant file in `src/data/`.
 `undefined` and the card renders a disabled link icon instead of a dead link;
 set it once a repo or live demo exists.
 
+Live project cards launch the deployed application in an accessible modal so a
+visitor stays in the portfolio. Every modal includes an open-in-new-tab
+fallback for hosts that deny iframe embedding. GlucoNimbus also includes a
+brief data-flow explanation and a link to its architecture view.
+
 ## Development
 
 ```bash

@@ -3,7 +3,7 @@ import { ArrowIcon } from './icons';
 import { StatusPill } from './StatusPill';
 import styles from './ProjectCard.module.css';
 
-export function ProjectCard({ project }: { project: ProjectEntry }) {
+export function ProjectCard({ project, onLaunchDemo }: { project: ProjectEntry; onLaunchDemo: (project: ProjectEntry) => void }) {
   const isUnbuilt = project.status === 'planned';
 
   return (
@@ -11,10 +11,10 @@ export function ProjectCard({ project }: { project: ProjectEntry }) {
       <div className={styles.titleRow}>
         <span className={styles.title}>{project.name}</span>
         {project.url && (
-        <a className={styles.launch} href={project.url} target="_blank" rel="noopener noreferrer">
-          Launch Demo
-          <ArrowIcon />
-        </a>
+          <button className={styles.launch} type="button" onClick={() => onLaunchDemo(project)}>
+            Launch Demo
+            <ArrowIcon />
+          </button>
       )}
       </div>
 
