@@ -523,6 +523,31 @@ html[data-skin="contrast"][data-mode="dark"] { --bg: #000; --surface: #000; --su
 
 /* Wide rail themes keep the page width; reading column sizes above are caps, not minimums. */
 @media (max-width: 960px) { html[data-skin] main { max-width: none; } }
+
+/* ---- Fluid contents rail, no horizontal scrolling, Studied tick on the left ---- */
+.wrap { grid-template-columns: clamp(220px, 22vw, 350px) minmax(0, 1fr); }
+.toc { overflow-x: hidden; overflow-wrap: anywhere; }
+.toc li ul a { min-width: 0; }
+.toc li ul a span { flex: none; }
+@media (max-width: 960px) { .wrap { grid-template-columns: minmax(0, 1fr); } }
+
+figure.code pre, figure.code pre code { white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal; }
+figure.code pre { overflow-x: hidden; }
+.scroll { overflow-x: visible; }
+.tbl td, .tbl th { white-space: normal; overflow-wrap: anywhere; }
+.diagram { overflow-x: hidden; }
+.diagram svg { max-width: 100%; height: auto; }
+
+.qhead { grid-template-columns: auto auto minmax(0, 1fr); }
+.qhead .done { order: -1; }
+.lhead .done { order: -1; margin-right: var(--s3); }
+@media (max-width: 560px) {
+  .qhead { grid-template-columns: auto minmax(0, 1fr); }
+  .dm { grid-column: auto; justify-self: start; }
+  .qhead h3 { grid-column: 1 / -1; }
+}
+.lhead { grid-template-columns: auto auto minmax(0, 1fr); }
+@media (max-width: 560px) { .lhead { grid-template-columns: auto minmax(0, 1fr); } .lhead h4 { grid-column: 1 / -1; } .lhead .lnum { grid-column: auto; } }
 </style>
 </head>
 <body>
