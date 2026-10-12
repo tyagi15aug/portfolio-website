@@ -538,16 +538,10 @@ figure.code pre { overflow-x: hidden; }
 .diagram { overflow-x: hidden; }
 .diagram svg { max-width: 100%; height: auto; }
 
-.qhead { grid-template-columns: auto auto minmax(0, 1fr); }
-.qhead .done { order: -1; }
-.lhead .done { order: -1; margin-right: var(--s3); }
-@media (max-width: 560px) {
-  .qhead { grid-template-columns: auto minmax(0, 1fr); }
-  .dm { grid-column: auto; justify-self: start; }
-  .qhead h3 { grid-column: 1 / -1; }
-}
-.lhead { grid-template-columns: auto auto minmax(0, 1fr); }
-@media (max-width: 560px) { .lhead { grid-template-columns: auto minmax(0, 1fr); } .lhead h4 { grid-column: 1 / -1; } .lhead .lnum { grid-column: auto; } }
+/* Contents bar: a studied item shows its ID in green italics (no tick) */
+.toc li ul a.done::after { content: none; }
+.toc li ul a.done span { color: var(--note); font-style: italic; font-weight: 600; }
+html[data-skin="dyslexia"] .toc li ul a.done span { font-style: normal !important; text-decoration: underline; text-decoration-thickness: 2px; }
 </style>
 </head>
 <body>
