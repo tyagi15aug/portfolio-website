@@ -68,7 +68,7 @@ p { margin: 0; }
 
 /* toolbar */
 .toolbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--surface); border-bottom: 1px solid var(--line); }
-.tbin { max-width: 1320px; margin: 0 auto; padding-inline: 16px; min-height: var(--tb-h); display: flex; align-items: center; gap: var(--s4); flex-wrap: wrap; padding-block: var(--s2); }
+.tbin { max-width: 1500px; margin: 0 auto; padding-inline: 16px; min-height: var(--tb-h); display: flex; align-items: center; gap: var(--s4); flex-wrap: wrap; padding-block: var(--s2); }
 .brand { font-family: var(--f-display); font-weight: 700; font-size: 1.15rem; letter-spacing: .04em; color: var(--ink); text-decoration: none; white-space: nowrap; }
 .brand span { color: var(--accent); }
 .search { flex: 1 1 14rem; min-width: 0; }
@@ -79,7 +79,7 @@ p { margin: 0; }
 .navbtn { display: none; font: inherit; font-size: .9rem; padding: .3rem .7rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 4px; cursor: pointer; }
 
 /* frame */
-.wrap { max-width: 1320px; margin: 0 auto; padding-inline: 16px; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: var(--s6); }
+.wrap { max-width: 1500px; margin: 0 auto; padding-inline: 16px; display: grid; grid-template-columns: 350px minmax(0, 1fr); gap: var(--s6); }
 .toc { position: sticky; top: calc(var(--tb-h) + env(safe-area-inset-top, 0px) + 8px); align-self: start; max-height: calc(100vh - var(--tb-h) - 24px); overflow-y: auto; padding-block: var(--s5); font-size: .9rem; }
 .toc ul { list-style: none; margin: 0; padding: 0; }
 .toc > ul > li { margin-bottom: var(--s2); }
@@ -88,7 +88,7 @@ p { margin: 0; }
 .toc li ul a span { font-family: var(--f-mono); font-size: .76rem; color: var(--accent); min-width: 1.9rem; padding-top: .1rem; }
 .toc a:hover { color: var(--link); }
 .toc li ul a.done::after { content: "✓"; color: var(--note); margin-left: auto; }
-main { min-width: 0; padding-block: var(--s5) var(--s7); max-width: 900px; }
+main { min-width: 0; padding-block: var(--s5) var(--s7); }
 
 /* sections */
 .sec { padding-block: var(--s6); border-bottom: 2px solid var(--ink); display: flex; flex-direction: column; gap: var(--s4); }
