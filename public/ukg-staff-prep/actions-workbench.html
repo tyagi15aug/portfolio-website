@@ -1,0 +1,1822 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Actions Workbench</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<script>(function(){try{var p=localStorage.getItem('theme-preference');if(p==='light'||p==='dark')document.documentElement.setAttribute('data-theme',p);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>/* BASICS */
+
+.CodeMirror {
+  /* Set height, width, borders, and global font properties here */
+  font-family: monospace;
+  height: 300px;
+  color: black;
+  direction: ltr;
+}
+
+/* PADDING */
+
+.CodeMirror-lines {
+  padding: 4px 0; /* Vertical padding around content */
+}
+.CodeMirror pre.CodeMirror-line,
+.CodeMirror pre.CodeMirror-line-like {
+  padding: 0 4px; /* Horizontal padding of content */
+}
+
+.CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+  background-color: white; /* The little square between H and V scrollbars */
+}
+
+/* GUTTER */
+
+.CodeMirror-gutters {
+  border-right: 1px solid #ddd;
+  background-color: #f7f7f7;
+  white-space: nowrap;
+}
+.CodeMirror-linenumbers {}
+.CodeMirror-linenumber {
+  padding: 0 3px 0 5px;
+  min-width: 20px;
+  text-align: right;
+  color: #999;
+  white-space: nowrap;
+}
+
+.CodeMirror-guttermarker { color: black; }
+.CodeMirror-guttermarker-subtle { color: #999; }
+
+/* CURSOR */
+
+.CodeMirror-cursor {
+  border-left: 1px solid black;
+  border-right: none;
+  width: 0;
+}
+/* Shown when moving in bi-directional text */
+.CodeMirror div.CodeMirror-secondarycursor {
+  border-left: 1px solid silver;
+}
+.cm-fat-cursor .CodeMirror-cursor {
+  width: auto;
+  border: 0 !important;
+  background: #7e7;
+}
+.cm-fat-cursor div.CodeMirror-cursors {
+  z-index: 1;
+}
+.cm-fat-cursor .CodeMirror-line::selection,
+.cm-fat-cursor .CodeMirror-line > span::selection, 
+.cm-fat-cursor .CodeMirror-line > span > span::selection { background: transparent; }
+.cm-fat-cursor .CodeMirror-line::-moz-selection,
+.cm-fat-cursor .CodeMirror-line > span::-moz-selection,
+.cm-fat-cursor .CodeMirror-line > span > span::-moz-selection { background: transparent; }
+.cm-fat-cursor { caret-color: transparent; }
+@-moz-keyframes blink {
+  0% {}
+  50% { background-color: transparent; }
+  100% {}
+}
+@-webkit-keyframes blink {
+  0% {}
+  50% { background-color: transparent; }
+  100% {}
+}
+@keyframes blink {
+  0% {}
+  50% { background-color: transparent; }
+  100% {}
+}
+
+/* Can style cursor different in overwrite (non-insert) mode */
+.CodeMirror-overwrite .CodeMirror-cursor {}
+
+.cm-tab { display: inline-block; text-decoration: inherit; }
+
+.CodeMirror-rulers {
+  position: absolute;
+  left: 0; right: 0; top: -50px; bottom: 0;
+  overflow: hidden;
+}
+.CodeMirror-ruler {
+  border-left: 1px solid #ccc;
+  top: 0; bottom: 0;
+  position: absolute;
+}
+
+/* DEFAULT THEME */
+
+.cm-s-default .cm-header {color: blue;}
+.cm-s-default .cm-quote {color: #090;}
+.cm-negative {color: #d44;}
+.cm-positive {color: #292;}
+.cm-header, .cm-strong {font-weight: bold;}
+.cm-em {font-style: italic;}
+.cm-link {text-decoration: underline;}
+.cm-strikethrough {text-decoration: line-through;}
+
+.cm-s-default .cm-keyword {color: #708;}
+.cm-s-default .cm-atom {color: #219;}
+.cm-s-default .cm-number {color: #164;}
+.cm-s-default .cm-def {color: #00f;}
+.cm-s-default .cm-variable,
+.cm-s-default .cm-punctuation,
+.cm-s-default .cm-property,
+.cm-s-default .cm-operator {}
+.cm-s-default .cm-variable-2 {color: #05a;}
+.cm-s-default .cm-variable-3, .cm-s-default .cm-type {color: #085;}
+.cm-s-default .cm-comment {color: #a50;}
+.cm-s-default .cm-string {color: #a11;}
+.cm-s-default .cm-string-2 {color: #f50;}
+.cm-s-default .cm-meta {color: #555;}
+.cm-s-default .cm-qualifier {color: #555;}
+.cm-s-default .cm-builtin {color: #30a;}
+.cm-s-default .cm-bracket {color: #997;}
+.cm-s-default .cm-tag {color: #170;}
+.cm-s-default .cm-attribute {color: #00c;}
+.cm-s-default .cm-hr {color: #999;}
+.cm-s-default .cm-link {color: #00c;}
+
+.cm-s-default .cm-error {color: #f00;}
+.cm-invalidchar {color: #f00;}
+
+.CodeMirror-composing { border-bottom: 2px solid; }
+
+/* Default styles for common addons */
+
+div.CodeMirror span.CodeMirror-matchingbracket {color: #0b0;}
+div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #a22;}
+.CodeMirror-matchingtag { background: rgba(255, 150, 0, .3); }
+.CodeMirror-activeline-background {background: #e8f2ff;}
+
+/* STOP */
+
+/* The rest of this file contains styles related to the mechanics of
+   the editor. You probably shouldn't touch them. */
+
+.CodeMirror {
+  position: relative;
+  overflow: hidden;
+  background: white;
+}
+
+.CodeMirror-scroll {
+  overflow: scroll !important; /* Things will break if this is overridden */
+  /* 50px is the magic margin used to hide the element's real scrollbars */
+  /* See overflow: hidden in .CodeMirror */
+  margin-bottom: -50px; margin-right: -50px;
+  padding-bottom: 50px;
+  height: 100%;
+  outline: none; /* Prevent dragging from highlighting the element */
+  position: relative;
+  z-index: 0;
+}
+.CodeMirror-sizer {
+  position: relative;
+  border-right: 50px solid transparent;
+}
+
+/* The fake, visible scrollbars. Used to force redraw during scrolling
+   before actual scrolling happens, thus preventing shaking and
+   flickering artifacts. */
+.CodeMirror-vscrollbar, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+  position: absolute;
+  z-index: 6;
+  display: none;
+  outline: none;
+}
+.CodeMirror-vscrollbar {
+  right: 0; top: 0;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+.CodeMirror-hscrollbar {
+  bottom: 0; left: 0;
+  overflow-y: hidden;
+  overflow-x: scroll;
+}
+.CodeMirror-scrollbar-filler {
+  right: 0; bottom: 0;
+}
+.CodeMirror-gutter-filler {
+  left: 0; bottom: 0;
+}
+
+.CodeMirror-gutters {
+  position: absolute; left: 0; top: 0;
+  min-height: 100%;
+  z-index: 3;
+}
+.CodeMirror-gutter {
+  white-space: normal;
+  height: 100%;
+  display: inline-block;
+  vertical-align: top;
+  margin-bottom: -50px;
+}
+.CodeMirror-gutter-wrapper {
+  position: absolute;
+  z-index: 4;
+  background: none !important;
+  border: none !important;
+}
+.CodeMirror-gutter-background {
+  position: absolute;
+  top: 0; bottom: 0;
+  z-index: 4;
+}
+.CodeMirror-gutter-elt {
+  position: absolute;
+  cursor: default;
+  z-index: 4;
+}
+.CodeMirror-gutter-wrapper ::selection { background-color: transparent }
+.CodeMirror-gutter-wrapper ::-moz-selection { background-color: transparent }
+
+.CodeMirror-lines {
+  cursor: text;
+  min-height: 1px; /* prevents collapsing before first draw */
+}
+.CodeMirror pre.CodeMirror-line,
+.CodeMirror pre.CodeMirror-line-like {
+  /* Reset some styles that the rest of the page might have set */
+  -moz-border-radius: 0; -webkit-border-radius: 0; border-radius: 0;
+  border-width: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  margin: 0;
+  white-space: pre;
+  word-wrap: normal;
+  line-height: inherit;
+  color: inherit;
+  z-index: 2;
+  position: relative;
+  overflow: visible;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-variant-ligatures: contextual;
+  font-variant-ligatures: contextual;
+}
+.CodeMirror-wrap pre.CodeMirror-line,
+.CodeMirror-wrap pre.CodeMirror-line-like {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  word-break: normal;
+}
+
+.CodeMirror-linebackground {
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  z-index: 0;
+}
+
+.CodeMirror-linewidget {
+  position: relative;
+  z-index: 2;
+  padding: 0.1px; /* Force widget margins to stay inside of the container */
+}
+
+.CodeMirror-widget {}
+
+.CodeMirror-rtl pre { direction: rtl; }
+
+.CodeMirror-code {
+  outline: none;
+}
+
+/* Force content-box sizing for the elements where we expect it */
+.CodeMirror-scroll,
+.CodeMirror-sizer,
+.CodeMirror-gutter,
+.CodeMirror-gutters,
+.CodeMirror-linenumber {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+
+.CodeMirror-measure {
+  position: absolute;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.CodeMirror-cursor {
+  position: absolute;
+  pointer-events: none;
+}
+.CodeMirror-measure pre { position: static; }
+
+div.CodeMirror-cursors {
+  visibility: hidden;
+  position: relative;
+  z-index: 3;
+}
+div.CodeMirror-dragcursors {
+  visibility: visible;
+}
+
+.CodeMirror-focused div.CodeMirror-cursors {
+  visibility: visible;
+}
+
+.CodeMirror-selected { background: #d9d9d9; }
+.CodeMirror-focused .CodeMirror-selected { background: #d7d4f0; }
+.CodeMirror-crosshair { cursor: crosshair; }
+.CodeMirror-line::selection, .CodeMirror-line > span::selection, .CodeMirror-line > span > span::selection { background: #d7d4f0; }
+.CodeMirror-line::-moz-selection, .CodeMirror-line > span::-moz-selection, .CodeMirror-line > span > span::-moz-selection { background: #d7d4f0; }
+
+.cm-searching {
+  background-color: #ffa;
+  background-color: rgba(255, 255, 0, .4);
+}
+
+/* Used to force a border model for a node */
+.cm-force-border { padding-right: .1px; }
+
+@media print {
+  /* Hide the cursor when printing */
+  .CodeMirror div.CodeMirror-cursors {
+    visibility: hidden;
+  }
+}
+
+/* See issue #2901 */
+.cm-tab-wrap-hack:after { content: ''; }
+
+/* Help users use markselection to safely style text background */
+span.CodeMirror-selectedtext { background: none; }
+
+/* The lint marker gutter */
+.CodeMirror-lint-markers {
+  width: 16px;
+}
+
+.CodeMirror-lint-tooltip {
+  background-color: #ffd;
+  border: 1px solid black;
+  border-radius: 4px 4px 4px 4px;
+  color: black;
+  font-family: monospace;
+  font-size: 10pt;
+  overflow: hidden;
+  padding: 2px 5px;
+  position: fixed;
+  white-space: pre;
+  white-space: pre-wrap;
+  z-index: 100;
+  max-width: 600px;
+  opacity: 0;
+  transition: opacity .4s;
+  -moz-transition: opacity .4s;
+  -webkit-transition: opacity .4s;
+  -o-transition: opacity .4s;
+  -ms-transition: opacity .4s;
+}
+
+.CodeMirror-lint-mark {
+  background-position: left bottom;
+  background-repeat: repeat-x;
+}
+
+.CodeMirror-lint-mark-warning {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sJFhQXEbhTg7YAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAMklEQVQI12NkgIIvJ3QXMjAwdDN+OaEbysDA4MPAwNDNwMCwiOHLCd1zX07o6kBVGQEAKBANtobskNMAAAAASUVORK5CYII=");
+}
+
+.CodeMirror-lint-mark-error {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sJDw4cOCW1/KIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAHElEQVQI12NggIL/DAz/GdA5/xkY/qPKMDAwAADLZwf5rvm+LQAAAABJRU5ErkJggg==");
+}
+
+.CodeMirror-lint-marker {
+  background-position: center center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  display: inline-block;
+  height: 16px;
+  width: 16px;
+  vertical-align: middle;
+  position: relative;
+}
+
+.CodeMirror-lint-message {
+  padding-left: 18px;
+  background-position: top left;
+  background-repeat: no-repeat;
+}
+
+.CodeMirror-lint-marker-warning, .CodeMirror-lint-message-warning {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAANlBMVEX/uwDvrwD/uwD/uwD/uwD/uwD/uwD/uwD/uwD6twD/uwAAAADurwD2tQD7uAD+ugAAAAD/uwDhmeTRAAAADHRSTlMJ8mN1EYcbmiixgACm7WbuAAAAVklEQVR42n3PUQqAIBBFUU1LLc3u/jdbOJoW1P08DA9Gba8+YWJ6gNJoNYIBzAA2chBth5kLmG9YUoG0NHAUwFXwO9LuBQL1giCQb8gC9Oro2vp5rncCIY8L8uEx5ZkAAAAASUVORK5CYII=");
+}
+
+.CodeMirror-lint-marker-error, .CodeMirror-lint-message-error {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAHlBMVEW7AAC7AACxAAC7AAC7AAAAAAC4AAC5AAD///+7AAAUdclpAAAABnRSTlMXnORSiwCK0ZKSAAAATUlEQVR42mWPOQ7AQAgDuQLx/z8csYRmPRIFIwRGnosRrpamvkKi0FTIiMASR3hhKW+hAN6/tIWhu9PDWiTGNEkTtIOucA5Oyr9ckPgAWm0GPBog6v4AAAAASUVORK5CYII=");
+}
+
+.CodeMirror-lint-marker-multiple {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAHCAMAAADzjKfhAAAACVBMVEUAAAAAAAC/v7914kyHAAAAAXRSTlMAQObYZgAAACNJREFUeNo1ioEJAAAIwmz/H90iFFSGJgFMe3gaLZ0od+9/AQZ0ADosbYraAAAAAElFTkSuQmCC");
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  width: 100%; height: 100%;
+}
+
+.CodeMirror-lint-line-error {
+  background-color: rgba(183, 76, 81, 0.08);
+}
+
+.CodeMirror-lint-line-warning {
+  background-color: rgba(255, 211, 0, 0.1);
+}
+
+/* Layout: workbench. Scenario sheet on top; editor (left) and analysis tabs (right) below; stacks on narrow screens. Same type and color system as the UKG Staff Prep Guide. */
+:root {
+  --bg: #eef1f3; --surface: #ffffff; --sunk: #e3e8ec; --ink: #142028; --muted: #55636d; --line: #cbd3d9;
+  --accent: #b4520c; --accent-soft: #fbeee2; --link: #0d5c8c; --ok: #1e7a46; --ok-soft: #e2f3e8;
+  --err: #c0362c; --err-soft: #fbe6e3; --warn: #9a6200; --warn-soft: #fbf0d8; --mark: #fff1a8;
+  --code-bg: #f8fafb; --cm-key: #0d5c8c; --cm-str: #1e7a46; --cm-com: #7b8790; --cm-num: #9c5b14; --cm-meta: #b4520c; --cm-sel: #d9e6f2; --cm-active: #f1f5f8;
+  --f-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --f-body: "Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1317; --surface: #141c22; --sunk: #1b252c; --ink: #e3e9ed; --muted: #94a3ad; --line: #283640;
+    --accent: #f08a3c; --accent-soft: #2e1f13; --link: #6cb8ea; --ok: #5cc98a; --ok-soft: #12291c;
+    --err: #f2786d; --err-soft: #2f1715; --warn: #e8b04a; --warn-soft: #2c2312; --mark: #5a4b12;
+    --code-bg: #10171c; --cm-key: #7cc3f0; --cm-str: #8fd6a6; --cm-com: #6f7d87; --cm-num: #e3a35d; --cm-meta: #f08a3c; --cm-sel: #23384a; --cm-active: #162027;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1317; --surface: #141c22; --sunk: #1b252c; --ink: #e3e9ed; --muted: #94a3ad; --line: #283640;
+  --accent: #f08a3c; --accent-soft: #2e1f13; --link: #6cb8ea; --ok: #5cc98a; --ok-soft: #12291c;
+  --err: #f2786d; --err-soft: #2f1715; --warn: #e8b04a; --warn-soft: #2c2312; --mark: #5a4b12;
+  --code-bg: #10171c; --cm-key: #7cc3f0; --cm-str: #8fd6a6; --cm-com: #6f7d87; --cm-num: #e3a35d; --cm-meta: #f08a3c; --cm-sel: #23384a; --cm-active: #162027;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.55; margin: 0; }
+a { color: var(--link); text-underline-offset: 2px; }
+code { font-family: var(--f-mono); font-size: .86em; background: var(--sunk); padding: .05em .3em; border-radius: 3px; overflow-wrap: anywhere; }
+h1, h2, h3, h4 { margin: 0; line-height: 1.2; text-wrap: balance; }
+p { margin: 0; }
+button:focus-visible, select:focus-visible, a:focus-visible, [role=tab]:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* top bar */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--surface); border-bottom: 1px solid var(--line); }
+.topin { max-width: 1440px; margin: 0 auto; padding: .5rem 16px; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.back { font-family: var(--f-display); font-weight: 600; letter-spacing: .03em; color: var(--muted); text-decoration: none; white-space: nowrap; }
+.back:hover { color: var(--link); }
+.brand { font-family: var(--f-display); font-weight: 700; font-size: 1.25rem; letter-spacing: .04em; margin-right: auto; }
+.brand span { color: var(--accent); }
+.progress { font-family: var(--f-display); font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.wb { max-width: 1440px; margin: 0 auto; padding: 1rem 16px 3rem; display: flex; flex-direction: column; gap: 1rem; }
+
+/* scenario */
+.scbar { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+.scbar label { font-family: var(--f-display); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; font-size: .85rem; color: var(--muted); }
+#pick { font: inherit; font-size: .95rem; padding: .35rem .5rem; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 4px; min-width: 0; flex: 1 1 260px; max-width: 460px; }
+.btn { font: inherit; font-size: .92rem; font-weight: 600; padding: .38rem .8rem; border-radius: 4px; border: 1px solid var(--ink); background: var(--ink); color: var(--surface); cursor: pointer; white-space: nowrap; }
+.btn:hover { filter: brightness(1.15); }
+.btn.ghost { background: var(--surface); color: var(--ink); border-color: var(--line); }
+.btn.ghost:hover { border-color: var(--link); color: var(--link); filter: none; }
+.btn.small { font-size: .82rem; padding: .25rem .6rem; }
+.btn:disabled { opacity: .4; cursor: default; filter: none; }
+.sccard { background: var(--surface); border: 1px solid var(--line); border-left: 6px solid var(--accent); padding: 1rem 1.25rem; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: .6rem 2rem; position: relative; }
+.scmain { display: flex; flex-direction: column; gap: .5rem; min-width: 0; }
+.meta { display: flex; gap: .4rem; flex-wrap: wrap; }
+.chip { font-family: var(--f-mono); font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; padding: .1rem .45rem; border: 1px solid var(--line); color: var(--muted); }
+.chip.lv1 { border-color: var(--ok); color: var(--ok); } .chip.lv2 { border-color: var(--link); color: var(--link); } .chip.lv3 { border-color: var(--accent); color: var(--accent); }
+#sc-title { font-family: var(--f-display); font-weight: 700; font-size: clamp(1.6rem, 3.2vw, 2.2rem); letter-spacing: .005em; }
+#sc-story { font-size: 1.04rem; max-width: 68ch; }
+.tasks { min-width: 0; border-left: 1px dashed var(--line); padding-left: 1.25rem; display: flex; flex-direction: column; gap: .35rem; }
+.tasks h2 { font-family: var(--f-display); font-weight: 600; font-size: .95rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+#sc-tasks { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: .25rem; }
+#sc-tasks li::marker { font-family: var(--f-mono); color: var(--accent); }
+.docs { font-size: .9rem; }
+.solved { position: absolute; top: .8rem; right: 1rem; font-family: var(--f-display); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: .85rem; color: var(--ok); border: 2px solid var(--ok); padding: .05rem .5rem; transform: rotate(-3deg); background: var(--surface); }
+
+/* work area */
+.work { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 1rem; align-items: start; }
+.edcol { min-width: 0; display: flex; flex-direction: column; border: 1px solid var(--line); background: var(--surface); }
+.edbar { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; padding: .45rem .6rem; border-bottom: 1px solid var(--line); background: var(--sunk); }
+.fname { font-family: var(--f-mono); font-size: .8rem; color: var(--muted); margin-right: auto; }
+.status { display: flex; gap: .35rem; flex-wrap: wrap; padding: .4rem .6rem; border-top: 1px solid var(--line); font-size: .8rem; align-items: center; }
+.status .kbd { margin-left: auto; color: var(--muted); font-size: .78rem; }
+.pill { font-family: var(--f-mono); font-size: .72rem; padding: .05rem .45rem; border-radius: 10px; border: 1px solid var(--line); color: var(--muted); }
+.pill.err { border-color: var(--err); color: var(--err); background: var(--err-soft); }
+.pill.warn { border-color: var(--warn); color: var(--warn); background: var(--warn-soft); }
+.pill.ok { border-color: var(--ok); color: var(--ok); background: var(--ok-soft); }
+#editor { min-width: 0; }
+#editor .CodeMirror { height: min(64vh, 640px); min-height: 340px; font-family: var(--f-mono); font-size: 13.5px; line-height: 1.6; background: var(--code-bg); color: var(--ink); }
+.nocm { padding: 1rem; color: var(--err); }
+
+/* side panel */
+.side { min-width: 0; border: 1px solid var(--line); background: var(--surface); display: flex; flex-direction: column; }
+#tabs { display: flex; border-bottom: 1px solid var(--line); background: var(--sunk); overflow-x: auto; }
+[role=tab] { font: inherit; font-family: var(--f-display); font-weight: 600; font-size: .98rem; letter-spacing: .03em; padding: .55rem .8rem; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--muted); cursor: pointer; white-space: nowrap; display: inline-flex; gap: .35rem; align-items: center; }
+[role=tab][aria-selected=true] { color: var(--ink); border-bottom-color: var(--accent); background: var(--surface); }
+.badge { font-family: var(--f-mono); font-size: .7rem; min-width: 1.2rem; text-align: center; padding: 0 .3rem; border-radius: 8px; background: var(--line); color: var(--ink); }
+.badge:empty { display: none; }
+.badge.err { background: var(--err); color: var(--surface); } .badge.warn { background: var(--warn); color: var(--surface); } .badge.ok { background: var(--ok); color: var(--surface); }
+.panel { padding: .9rem 1rem; max-height: min(64vh, 640px); min-height: 340px; overflow-y: auto; display: flex; flex-direction: column; gap: .75rem; }
+.empty { color: var(--muted); font-size: .95rem; }
+
+.plist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .55rem; }
+.plist li { border-left: 3px solid var(--line); padding: .35rem .6rem; background: var(--bg); display: flex; flex-direction: column; gap: .15rem; }
+.plist li.sev-error { border-left-color: var(--err); } .plist li.sev-warning { border-left-color: var(--warn); }
+.pjump { font: inherit; background: none; border: 0; padding: 0; display: flex; gap: .5rem; align-items: baseline; cursor: pointer; color: inherit; text-align: left; }
+.sev { font-family: var(--f-display); font-weight: 700; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
+.sev-error .sev { color: var(--err); } .sev-warning .sev { color: var(--warn); } .sev-info .sev { color: var(--muted); }
+.ln { font-family: var(--f-mono); font-size: .75rem; color: var(--link); text-decoration: underline; text-underline-offset: 2px; }
+.pmsg { font-weight: 600; font-size: .95rem; }
+.pwhy { font-size: .9rem; color: var(--muted); }
+
+.score { font-size: 1rem; }
+.clist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .4rem; }
+.clist li { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr); gap: .1rem .4rem; padding: .4rem .5rem; border: 1px solid var(--line); background: var(--bg); }
+.clist .mark { grid-row: 1 / span 2; font-weight: 700; width: 1.35rem; height: 1.35rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-size: .8rem; }
+.clist .pass .mark { background: var(--ok); color: var(--surface); } .clist .fail .mark { background: var(--err-soft); color: var(--err); border: 1px solid var(--err); }
+.clist .pass .clabel { color: var(--muted); }
+.chint { grid-column: 2; font-size: .9rem; background: var(--mark); color: var(--ink); padding: .25rem .45rem; }
+
+.xsec { display: flex; flex-direction: column; gap: .25rem; }
+.xsec h4 { font-family: var(--f-display); font-weight: 600; font-size: 1.05rem; letter-spacing: .03em; }
+.xjob h4 { font-family: var(--f-mono); font-size: .9rem; font-weight: 600; color: var(--accent); }
+.xsec ul { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: .2rem; font-size: .95rem; }
+
+.xplain { border-left: 4px solid var(--ok); background: var(--ok-soft); padding: .5rem .7rem; }
+.ansbar { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+.note { font-size: .82rem; color: var(--muted); }
+.anscode { margin: 0; background: var(--code-bg); border: 1px solid var(--line); padding: .7rem .8rem; overflow-x: auto; font-family: var(--f-mono); font-size: .82rem; line-height: 1.55; }
+.anscode code { background: none; padding: 0; white-space: pre; overflow-wrap: normal; }
+
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 50; background: var(--ink); color: var(--surface); padding: .6rem .9rem; display: flex; gap: .8rem; align-items: center; box-shadow: 0 6px 20px rgba(0,0,0,.25); max-width: calc(100% - 32px); font-weight: 600; }
+.toast .btn { background: var(--surface); color: var(--ink); border-color: var(--surface); }
+
+/* CodeMirror theme from tokens */
+.cm-s-default .cm-atom { color: var(--cm-key); font-weight: 600; }
+.cm-s-default .cm-string { color: var(--cm-str); }
+.cm-s-default .cm-comment { color: var(--cm-com); font-style: italic; }
+.cm-s-default .cm-number { color: var(--cm-num); }
+.cm-s-default .cm-meta, .cm-s-default .cm-keyword { color: var(--cm-meta); }
+.cm-s-default .cm-def, .cm-s-default .cm-variable-2 { color: var(--accent); }
+.CodeMirror-gutters { background: var(--sunk) !important; border-right: 1px solid var(--line) !important; }
+.CodeMirror-linenumber { color: var(--muted) !important; }
+.CodeMirror-cursor { border-left-color: var(--ink) !important; }
+.CodeMirror-selected, .CodeMirror-focused .CodeMirror-selected { background: var(--cm-sel) !important; }
+.CodeMirror-activeline-background { background: var(--cm-active) !important; }
+.CodeMirror-lint-tooltip { font-family: var(--f-body) !important; font-size: .88rem !important; background: var(--surface) !important; color: var(--ink) !important; border: 1px solid var(--line) !important; max-width: 420px; white-space: pre-wrap !important; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
+.CodeMirror-lint-mark-error { background: none !important; border-bottom: 2px wavy var(--err); }
+.CodeMirror-lint-mark-warning { background: none !important; border-bottom: 2px wavy var(--warn); }
+.CodeMirror-lint-mark-info { background: none !important; border-bottom: 1px dotted var(--muted); }
+
+@media (max-width: 1100px) {
+  .work { grid-template-columns: minmax(0, 1fr); }
+  .panel { max-height: none; min-height: 200px; }
+}
+@media (max-width: 720px) {
+  .sccard { grid-template-columns: minmax(0, 1fr); padding: .9rem; }
+  .tasks { border-left: 0; border-top: 1px dashed var(--line); padding: .6rem 0 0; }
+  #editor .CodeMirror { height: 52vh; min-height: 300px; font-size: 13px; }
+  .status .kbd { display: none; }
+  .solved { position: static; transform: none; justify-self: start; }
+  #pick { flex-basis: 100%; max-width: none; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+[hidden] { display: none !important; }
+
+#explain, #problems, #checks, #answer { display: flex; flex-direction: column; gap: .9rem; }
+@media (max-width: 560px) {
+  .topin { gap: .2rem .8rem; padding-block: .4rem; }
+  .back { font-size: .9rem; flex-basis: 100%; }
+  .brand { font-size: 1.1rem; }
+  .scbar label { display: none; }
+  .scbar .btn { flex: 1 1 auto; }
+}
+
+[hidden]{display:none!important}</style>
+</head>
+<body>
+<header class="top"><div class="topin">
+<a class="back" href="./">&larr; UKG Prep Guide</a>
+<span class="brand">Actions <span>Workbench</span></span>
+<span class="progress" id="progress" aria-live="polite"></span>
+</div></header>
+<main class="wb">
+<section class="scenario" aria-label="Scenario">
+  <div class="scbar">
+    <label for="pick">Scenario</label>
+    <select id="pick"></select>
+    <button type="button" class="btn ghost" id="prev">← Previous</button>
+    <button type="button" class="btn ghost" id="next">Next →</button>
+    <button type="button" class="btn ghost" id="random">Random unsolved</button>
+  </div>
+  <article class="sccard">
+    <div class="scmain">
+      <div class="meta" id="sc-meta"></div>
+      <h1 id="sc-title"></h1>
+      <p id="sc-story"></p>
+      <a class="docs" id="sc-docs" href="#" target="_blank" rel="noopener">Read the GitHub docs for this topic ↗</a>
+    </div>
+    <div class="tasks"><h2>Your task</h2><ol id="sc-tasks"></ol></div>
+    <span class="solved" id="solved" hidden>Solved</span>
+  </article>
+</section>
+<section class="work">
+  <div class="edcol">
+    <div class="edbar">
+      <span class="fname">.github/workflows/workflow.yml</span>
+      <button type="button" class="btn" id="check">Check answer</button>
+      <button type="button" class="btn ghost" id="hint">Hint</button>
+      <button type="button" class="btn ghost" id="reset">Reset</button>
+    </div>
+    <div id="editor"></div>
+    <div class="status"><span id="status"></span><span class="kbd">Tab indents 2 spaces · Ctrl/Cmd + Enter checks · Ctrl/Cmd + / comments</span></div>
+  </div>
+  <div class="side">
+    <div role="tablist" id="tabs" aria-label="Analysis">
+      <button role="tab" id="tab-problems" data-tab="problems" aria-controls="panel-problems" aria-selected="true">Problems <span class="badge"></span></button>
+      <button role="tab" id="tab-checks" data-tab="checks" aria-controls="panel-checks" aria-selected="false" tabindex="-1">Requirements <span class="badge"></span></button>
+      <button role="tab" id="tab-explain" data-tab="explain" aria-controls="panel-explain" aria-selected="false" tabindex="-1">What it does</button>
+      <button role="tab" id="tab-answer" data-tab="answer" aria-controls="panel-answer" aria-selected="false" tabindex="-1">Model answer</button>
+    </div>
+    <div class="panel" role="tabpanel" id="panel-problems" aria-labelledby="tab-problems"><div id="problems"></div></div>
+    <div class="panel" role="tabpanel" id="panel-checks" aria-labelledby="tab-checks" hidden><div id="checks"></div></div>
+    <div class="panel" role="tabpanel" id="panel-explain" aria-labelledby="tab-explain" hidden><div id="explain"></div></div>
+    <div class="panel" role="tabpanel" id="panel-answer" aria-labelledby="tab-answer" hidden><div id="answer"></div></div>
+  </div>
+</section>
+</main>
+<div class="toast" id="toast" role="status" hidden></div>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.js"></script><script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/yaml/yaml.js"></script><script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/lint/lint.js"></script><script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/selection/active-line.js"></script><script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/edit/closebrackets.js"></script><script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/comment/comment.js"></script><script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script><script>window.WB_YAML = {"first-ci": {"starter": "name: CI\n# 1. Add the triggers: push to main, and pull requests that target main.\n# 2. Add one job that installs dependencies and runs the tests.\n", "solution": "name: CI\non:\n  push:\n    branches: [main]\n  pull_request:\n    branches: [main]\npermissions:\n  contents: read\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 20\n      - run: npm ci\n      - run: npm test\n"}, "manual-choice": {"starter": "name: Manual deploy\non:\n  workflow_dispatch:\n    # Add two inputs here: environment and dry_run.\npermissions:\n  contents: read\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - run: echo \"Print the target environment and the dry-run flag here\"\n", "solution": "name: Manual deploy\non:\n  workflow_dispatch:\n    inputs:\n      environment:\n        description: Target environment\n        type: choice\n        options: [staging, production]\n        default: staging\n        required: true\n      dry_run:\n        description: Only print what would change\n        type: boolean\n        default: true\npermissions:\n  contents: read\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - name: Show the plan\n        env:\n          TARGET: ${{ inputs.environment }}\n          DRY_RUN: ${{ inputs.dry_run }}\n        run: |\n          echo \"Deploying to $TARGET (dry run: $DRY_RUN)\"\n"}, "nightly-utc": {"starter": "name: Nightly E2E\non:\n  schedule:\n    - cron: \"30 2 * * 1-5\"\npermissions:\n  contents: read\njobs:\n  e2e:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npx playwright test\n", "solution": "name: Nightly E2E\non:\n  schedule:\n    - cron: \"0 21 * * 0-4\"   # 02:30 IST Mon-Fri = 21:00 UTC Sun-Thu\n  workflow_dispatch:\npermissions:\n  contents: read\njobs:\n  e2e:\n    runs-on: ubuntu-latest\n    timeout-minutes: 60\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 20\n      - run: npm ci\n      - run: npx playwright install --with-deps\n      - run: npx playwright test\n"}, "path-filters": {"starter": "name: Unit tests\non:\n  pull_request:\n    paths:\n      - \"src/**\"\n    paths-ignore:\n      - \"docs/**\"\npermissions:\n  contents: read\njobs:\n  unit:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci\n      - run: npm test\n", "solution": "name: Unit tests\non:\n  pull_request:\n    paths:\n      - \"src/**\"\n      - \"package.json\"\n      - \"package-lock.json\"\n      - \"!src/**/*.md\"\npermissions:\n  contents: read\njobs:\n  unit:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci\n      - run: npm test\n"}, "fan-out": {"starter": "name: PR checks\non:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  lint:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci && npm run lint\n  unit:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci && npm test\n  e2e:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci && npx playwright test\n", "solution": "name: PR checks\non:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  lint:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci && npm run lint\n  unit:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci && npm test\n  e2e:\n    needs: [lint, unit]\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci && npx playwright test\n"}, "matrix": {"starter": "name: Compatibility\non:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 20\n      - run: npm ci\n      - run: npm test\n", "solution": "name: Compatibility\non:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  test:\n    strategy:\n      fail-fast: false\n      matrix:\n        os: [ubuntu-latest, windows-latest]\n        node: [18, 20, 22]\n    runs-on: ${{ matrix.os }}\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: ${{ matrix.node }}\n      - run: npm ci\n      - run: npm test\n"}, "cache": {"starter": "name: CI\non:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 20\n      - run: npm ci\n      - run: npm test\n", "solution": "name: CI\non:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 20\n          cache: npm\n      - name: Cache Playwright browsers\n        uses: actions/cache@v4\n        with:\n          path: ~/.cache/ms-playwright\n          key: playwright-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}\n      - run: npm ci\n      - run: npm test\n"}, "artifacts": {"starter": "name: Build and deploy\non:\n  push:\n    branches: [main]\npermissions:\n  contents: read\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci && npm run build\n      - uses: actions/upload-artifact@v3\n        with:\n          path: dist\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/download-artifact@v3\n      - run: ./scripts/deploy.sh dist\n", "solution": "name: Build and deploy\non:\n  push:\n    branches: [main]\npermissions:\n  contents: read\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci && npm run build\n      - uses: actions/upload-artifact@v4\n        with:\n          name: dist\n          path: dist\n  deploy:\n    needs: build\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/download-artifact@v4\n        with:\n          name: dist\n          path: dist\n      - run: ./scripts/deploy.sh dist\n"}, "outputs": {"starter": "name: Release\non:\n  push:\n    tags: [\"v*\"]\npermissions:\n  contents: read\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: echo \"::set-output name=version::$(node -p \"require('./package.json').version\")\"\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - run: echo \"Releasing version ...\"\n", "solution": "name: Release\non:\n  push:\n    tags: [\"v*\"]\npermissions:\n  contents: read\njobs:\n  build:\n    runs-on: ubuntu-latest\n    outputs:\n      version: ${{ steps.ver.outputs.version }}\n    steps:\n      - uses: actions/checkout@v4\n      - id: ver\n        run: echo \"version=$(node -p \"require('./package.json').version\")\" >> \"$GITHUB_OUTPUT\"\n  release:\n    needs: build\n    runs-on: ubuntu-latest\n    steps:\n      - env:\n          VERSION: ${{ needs.build.outputs.version }}\n        run: echo \"Releasing version $VERSION\"\n"}, "conditions": {"starter": "name: CI and deploy\non:\n  push:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci && npm test\n      - run: ./scripts/collect-logs.sh\n      - run: ./scripts/cleanup-test-data.sh\n  deploy:\n    needs: test\n    runs-on: ubuntu-latest\n    steps:\n      - run: ./scripts/deploy.sh\n", "solution": "name: CI and deploy\non:\n  push:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci && npm test\n      - name: Collect logs for debugging\n        if: failure()\n        run: ./scripts/collect-logs.sh\n      - name: Remove test data\n        if: always()\n        run: ./scripts/cleanup-test-data.sh\n  deploy:\n    needs: test\n    if: github.event_name == 'push' && github.ref == 'refs/heads/main'\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: ./scripts/deploy.sh\n"}, "reusable-define": {"starter": "name: Shared E2E\n# This file lives in acme/platform-workflows/.github/workflows/e2e.yml.\n# Turn it into a reusable workflow.\non:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  e2e:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 20\n      - run: npm ci\n      - run: npm test\n", "solution": "name: Shared E2E\non:\n  workflow_call:\n    inputs:\n      node-version:\n        type: string\n        default: \"20\"\n      test-command:\n        type: string\n        default: npm test\n    secrets:\n      NPM_TOKEN:\n        required: true\npermissions:\n  contents: read\njobs:\n  e2e:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: ${{ inputs.node-version }}\n          registry-url: https://npm.pkg.github.com\n      - run: npm ci\n        env:\n          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}\n      - run: ${{ inputs.test-command }}\n"}, "reusable-call": {"starter": "name: E2E\non:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  e2e:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 22\n          registry-url: https://npm.pkg.github.com\n      - run: npm ci\n        env:\n          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}\n      - run: npx playwright install --with-deps\n      - run: npx playwright test\n      - uses: actions/upload-artifact@v4\n        if: always()\n        with:\n          name: playwright-report\n          path: playwright-report\n", "solution": "name: E2E\non:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  e2e:\n    uses: acme/platform-workflows/.github/workflows/e2e.yml@v3\n    with:\n      node-version: \"22\"\n    secrets: inherit\n"}, "concurrency": {"starter": "name: CI\non:\n  push:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci && npm test\n", "solution": "name: CI\non:\n  push:\n  pull_request:\npermissions:\n  contents: read\nconcurrency:\n  group: ${{ github.workflow }}-${{ github.ref }}\n  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci && npm test\n"}, "sharding": {"starter": "name: E2E\non:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  e2e:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 20\n      - run: npm ci\n      - run: npx playwright install --with-deps\n      - run: npx playwright test\n", "solution": "name: E2E\non:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  e2e:\n    runs-on: ubuntu-latest\n    strategy:\n      fail-fast: false\n      matrix:\n        shard: [1, 2, 3, 4]\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 20\n      - run: npm ci\n      - run: npx playwright install --with-deps\n      - run: npx playwright test --shard=${{ matrix.shard }}/4 --reporter=blob\n      - uses: actions/upload-artifact@v4\n        if: ${{ !cancelled() }}\n        with:\n          name: blob-report-${{ matrix.shard }}\n          path: blob-report\n  merge-reports:\n    needs: e2e\n    if: ${{ !cancelled() }}\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 20\n      - run: npm ci\n      - uses: actions/download-artifact@v4\n        with:\n          pattern: blob-report-*\n          path: all-blob-reports\n          merge-multiple: true\n      - run: npx playwright merge-reports --reporter html ./all-blob-reports\n      - uses: actions/upload-artifact@v4\n        with:\n          name: html-report\n          path: playwright-report\n"}, "oidc": {"starter": "name: Upload results\non:\n  push:\n    branches: [main]\npermissions:\n  contents: read\njobs:\n  upload:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: aws-actions/configure-aws-credentials@v4\n        with:\n          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}\n          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}\n          aws-region: ap-south-1\n      - run: aws s3 cp ./results s3://acme-test-results/ --recursive\n", "solution": "name: Upload results\non:\n  push:\n    branches: [main]\npermissions:\n  contents: read\n  id-token: write\njobs:\n  upload:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: aws-actions/configure-aws-credentials@v4\n        with:\n          role-to-assume: arn:aws:iam::123456789012:role/gha-results-uploader\n          aws-region: ap-south-1\n      - run: aws s3 cp ./results s3://acme-test-results/ --recursive\n"}, "least-privilege": {"starter": "name: PR report\non:\n  pull_request:\npermissions: write-all\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci && npm test\n  comment:\n    needs: test\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/github-script@v7\n        with:\n          script: |\n            await github.rest.issues.createComment({\n              owner: context.repo.owner,\n              repo: context.repo.repo,\n              issue_number: context.issue.number,\n              body: 'All tests passed.'\n            });\n", "solution": "name: PR report\non:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci && npm test\n  comment:\n    needs: test\n    runs-on: ubuntu-latest\n    permissions:\n      pull-requests: write\n    steps:\n      - uses: actions/github-script@v7\n        with:\n          script: |\n            await github.rest.issues.createComment({\n              owner: context.repo.owner,\n              repo: context.repo.repo,\n              issue_number: context.issue.number,\n              body: 'All tests passed.'\n            });\n"}, "fork-safe": {"starter": "name: PR tests\non:\n  pull_request_target:\npermissions:\n  contents: write\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          ref: ${{ github.event.pull_request.head.sha }}\n      - run: npm ci && npm test\n        env:\n          API_TOKEN: ${{ secrets.TEST_API_TOKEN }}\n", "solution": "name: PR tests\non:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci && npm test\n"}, "injection": {"starter": "name: PR info\non:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  info:\n    runs-on: ubuntu-latest\n    steps:\n      - run: |\n          echo \"Title: ${{ github.event.pull_request.title }}\"\n          echo \"Branch: ${{ github.head_ref }}\"\n", "solution": "name: PR info\non:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  info:\n    runs-on: ubuntu-latest\n    steps:\n      - env:\n          PR_TITLE: ${{ github.event.pull_request.title }}\n          PR_BRANCH: ${{ github.head_ref }}\n        run: |\n          echo \"Title: $PR_TITLE\"\n          echo \"Branch: $PR_BRANCH\"\n"}, "private-runner": {"starter": "name: E2E staging\non:\n  workflow_dispatch:\npermissions:\n  contents: read\njobs:\n  e2e:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci\n      - run: npx playwright test --project=staging\n", "solution": "name: E2E staging\non:\n  workflow_dispatch:\npermissions:\n  contents: read\njobs:\n  e2e:\n    runs-on: arc-e2e-private\n    environment: staging\n    timeout-minutes: 30\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci\n      - run: npx playwright test --project=staging\n"}, "promote": {"starter": "name: Release\non:\n  push:\n    branches: [main]\npermissions:\n  contents: read\n  id-token: write\njobs:\n  staging:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: docker build -t results-api:latest .\n      - run: ./deploy.sh staging results-api:latest\n  production:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: docker build -t results-api:latest .\n      - run: ./deploy.sh production results-api:latest\n", "solution": "name: Release\non:\n  push:\n    branches: [main]\npermissions:\n  contents: read\n  id-token: write\nenv:\n  IMAGE: 123456789012.dkr.ecr.ap-south-1.amazonaws.com/results-api\njobs:\n  build:\n    runs-on: ubuntu-latest\n    outputs:\n      tag: ${{ github.sha }}\n    steps:\n      - uses: actions/checkout@v4\n      - uses: aws-actions/configure-aws-credentials@v4\n        with:\n          role-to-assume: arn:aws:iam::123456789012:role/gha-ecr-push\n          aws-region: ap-south-1\n      - uses: aws-actions/amazon-ecr-login@v2\n      - uses: docker/build-push-action@v6\n        with:\n          push: true\n          tags: ${{ env.IMAGE }}:${{ github.sha }}\n  deploy-staging:\n    needs: build\n    runs-on: ubuntu-latest\n    environment: staging\n    steps:\n      - uses: actions/checkout@v4\n      - run: ./deploy.sh staging \"$IMAGE:${{ needs.build.outputs.tag }}\"\n  deploy-production:\n    needs: [build, deploy-staging]\n    runs-on: ubuntu-latest\n    environment: production\n    steps:\n      - uses: actions/checkout@v4\n      - run: ./deploy.sh production \"$IMAGE:${{ needs.build.outputs.tag }}\"\n"}, "notify": {"starter": "name: Nightly E2E\non:\n  schedule:\n    - cron: \"0 21 * * 0-4\"\npermissions:\n  contents: read\njobs:\n  tests:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci\n      - run: npx playwright test\n", "solution": "name: Nightly E2E\non:\n  schedule:\n    - cron: \"0 21 * * 0-4\"\npermissions:\n  contents: read\njobs:\n  tests:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci\n      - run: npx playwright test\n      - name: Write the job summary\n        if: always()\n        run: |\n          echo \"## Nightly E2E\" >> \"$GITHUB_STEP_SUMMARY\"\n          echo \"Result: ${{ job.status }}\" >> \"$GITHUB_STEP_SUMMARY\"\n  notify:\n    needs: tests\n    if: failure()\n    runs-on: ubuntu-latest\n    steps:\n      - uses: slackapi/slack-github-action@v2\n        with:\n          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}\n          webhook-type: incoming-webhook\n          payload: |\n            text: \"Nightly E2E failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"\n"}, "dispatch": {"starter": "name: Smoke tests\non:\n  push:\n    branches: [main]\npermissions:\n  contents: read\njobs:\n  smoke:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci\n      - run: npx playwright test --grep @smoke\n", "solution": "name: Smoke tests\non:\n  repository_dispatch:\n    types: [deploy-finished]\n  workflow_dispatch:\npermissions:\n  contents: read\njobs:\n  smoke:\n    if: github.event_name == 'workflow_dispatch' || github.event.client_payload.status == 'success'\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci\n      - env:\n          TARGET_ENV: ${{ github.event.client_payload.environment || 'staging' }}\n        run: npx playwright test --grep @smoke --project=\"$TARGET_ENV\"\n"}};</script>
+<script>
+if (!window.CodeMirror || !window.jsyaml) {
+  document.getElementById('editor').innerHTML = '<p class="nocm">The editor could not load. Check your network connection and reload the page.</p>';
+} else {
+/* Actions Workbench: workflow checker.
+   lintWorkflow(text, yamlLib) -> { doc, problems: [{sev, line, msg, why}], index }
+   Pure functions; no DOM. Messages use ASD-STE100 style. */
+(function (global) {
+  'use strict';
+
+  // ---------- line index: path -> 0-based line ----------
+  function key(path) { return path.join('\u0001'); }
+  function buildLineIndex(text) {
+    var lines = text.split('\n'), idx = {}, stack = [{ indent: -1, path: [], count: 0 }];
+    var blockIndent = null;
+    for (var i = 0; i < lines.length; i++) {
+      var raw = lines[i];
+      if (/^\s*$/.test(raw)) continue;
+      var indent = raw.match(/^ */)[0].length;
+      if (blockIndent !== null) { if (indent > blockIndent) continue; blockIndent = null; }
+      var content = raw.slice(indent);
+      if (content[0] === '#') continue;
+      var keyIndent = indent;
+      if (content === '-' || content.indexOf('- ') === 0) {
+        while (stack.length > 1 && (stack[stack.length - 1].indent > indent || (stack[stack.length - 1].indent === indent && stack[stack.length - 1].item))) stack.pop();
+        var parent = stack[stack.length - 1];
+        var ipath = parent.path.concat(parent.count++);
+        idx[key(ipath)] = i;
+        stack.push({ indent: indent, path: ipath, count: 0, item: true });
+        content = content.slice(2).replace(/^ +/, function (m) { keyIndent = indent + 2 + m.length; return ''; });
+        if (keyIndent === indent) keyIndent = indent + 2;
+        if (!content || content[0] === '#') continue;
+      } else {
+        while (stack.length > 1 && stack[stack.length - 1].indent >= indent) stack.pop();
+      }
+      var m = content.match(/^("([^"]+)"|'([^']+)'|[^\s#'"][^:#]*?)\s*:(?:\s+(.*))?$/);
+      if (!m) continue;
+      var k = m[2] || m[3] || m[1].trim();
+      var val = (m[4] || '').replace(/\s+#.*$/, '').trim();
+      var top = stack[stack.length - 1];
+      var kpath = top.path.concat(k);
+      idx[key(kpath)] = i;
+      if (val === '') stack.push({ indent: keyIndent, path: kpath, count: 0 });
+      else if (/^[|>][-+0-9]*$/.test(val)) blockIndent = keyIndent;
+    }
+    return idx;
+  }
+  function lineOf(index, path) {
+    for (var n = path.length; n >= 0; n--) {
+      var l = index[key(path.slice(0, n))];
+      if (l !== undefined) return l;
+    }
+    return 0;
+  }
+
+  // ---------- helpers ----------
+  function isObj(x) { return x !== null && typeof x === 'object' && !Array.isArray(x); }
+  function lev(a, b) {
+    var d = []; for (var i = 0; i <= a.length; i++) { d[i] = [i]; }
+    for (var j = 1; j <= b.length; j++) d[0][j] = j;
+    for (i = 1; i <= a.length; i++) for (j = 1; j <= b.length; j++)
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    return d[a.length][b.length];
+  }
+  function suggest(word, list) {
+    var best = null, bd = 99;
+    list.forEach(function (w) { var d = lev(String(word).toLowerCase(), w.toLowerCase()); if (d < bd) { bd = d; best = w; } });
+    return bd <= Math.max(2, Math.floor(String(word).length / 3)) ? best : null;
+  }
+  function didYouMean(word, list) { var s = suggest(word, list); return s ? ' Did you mean `' + s + '`?' : ''; }
+
+  var TOP_KEYS = ['name', 'run-name', 'on', 'permissions', 'env', 'defaults', 'concurrency', 'jobs'];
+  var EVENTS = ['branch_protection_rule', 'check_run', 'check_suite', 'create', 'delete', 'deployment', 'deployment_status', 'discussion', 'discussion_comment', 'fork', 'gollum', 'issue_comment', 'issues', 'label', 'merge_group', 'milestone', 'page_build', 'public', 'pull_request', 'pull_request_review', 'pull_request_review_comment', 'pull_request_target', 'push', 'registry_package', 'release', 'repository_dispatch', 'schedule', 'status', 'watch', 'workflow_call', 'workflow_dispatch', 'workflow_run'];
+  var FILTER_KEYS = ['branches', 'branches-ignore', 'tags', 'tags-ignore', 'paths', 'paths-ignore', 'types'];
+  var JOB_KEYS = ['name', 'needs', 'runs-on', 'permissions', 'environment', 'concurrency', 'outputs', 'env', 'defaults', 'if', 'steps', 'timeout-minutes', 'strategy', 'continue-on-error', 'container', 'services', 'uses', 'with', 'secrets'];
+  var REUSABLE_JOB_KEYS = ['name', 'uses', 'with', 'secrets', 'needs', 'if', 'permissions', 'strategy', 'concurrency'];
+  var STEP_KEYS = ['id', 'if', 'name', 'uses', 'run', 'shell', 'with', 'env', 'continue-on-error', 'timeout-minutes', 'working-directory'];
+  var PERM_SCOPES = ['actions', 'attestations', 'checks', 'contents', 'deployments', 'discussions', 'id-token', 'issues', 'models', 'packages', 'pages', 'pull-requests', 'repository-projects', 'security-events', 'statuses'];
+  var CONTEXTS = ['github', 'env', 'vars', 'job', 'jobs', 'steps', 'runner', 'secrets', 'strategy', 'matrix', 'needs', 'inputs'];
+  var FUNCS = ['contains', 'startsWith', 'endsWith', 'format', 'join', 'toJSON', 'fromJSON', 'hashFiles', 'success', 'always', 'cancelled', 'failure', 'case'];
+  var SHELLS = ['bash', 'sh', 'pwsh', 'powershell', 'cmd', 'python'];
+  var MIN_MAJOR = {
+    'actions/checkout': [4, 'v4 or later'], 'actions/setup-node': [4, 'v4 or later'], 'actions/setup-python': [5, 'v5 or later'],
+    'actions/setup-java': [4, 'v4 or later'], 'actions/cache': [4, 'v4 or later'], 'actions/upload-artifact': [4, 'v4 or later'],
+    'actions/download-artifact': [4, 'v4 or later'], 'aws-actions/configure-aws-credentials': [4, 'v4 or later'],
+    'actions/github-script': [7, 'v7 or later'], 'docker/build-push-action': [5, 'v5 or later'], 'docker/login-action': [3, 'v3 or later'],
+    'slackapi/slack-github-action': [2, 'v2 or later'],
+  };
+  var REQUIRED_WITH = {
+    'actions/cache': ['path', 'key'], 'actions/upload-artifact': ['path'],
+    'aws-actions/configure-aws-credentials': ['aws-region'],
+  };
+
+  function normEvents(on) {
+    if (typeof on === 'string') { var o = {}; o[on] = null; return o; }
+    if (Array.isArray(on)) { var a = {}; on.forEach(function (e) { a[e] = null; }); return a; }
+    return isObj(on) ? on : {};
+  }
+  function asList(x) { return x == null ? [] : Array.isArray(x) ? x : [x]; }
+  function actionName(uses) { return String(uses).split('@')[0].split('/').slice(0, 2).join('/'); }
+  function actionRef(uses) { var p = String(uses).split('@'); return p.length > 1 ? p[1] : ''; }
+
+  // collect every string value with its path
+  function strings(node, path, out) {
+    if (typeof node === 'string') out.push({ path: path, s: node });
+    else if (Array.isArray(node)) node.forEach(function (v, i) { strings(v, path.concat(i), out); });
+    else if (isObj(node)) Object.keys(node).forEach(function (k) { strings(node[k], path.concat(k), out); });
+    return out;
+  }
+  function exprs(s) {
+    var out = [], re = /\$\{\{([\s\S]*?)\}\}/g, m;
+    while ((m = re.exec(s))) out.push(m[1]);
+    return out;
+  }
+  // property chains like steps.ver.outputs.x, needs.build.outputs.y, matrix.node
+  function chains(expr) {
+    var clean = expr.replace(/'(?:[^']|'')*'/g, "''");
+    var out = [], re = /(^|[^\w.\-])([A-Za-z_][\w-]*)((?:\s*\.\s*[A-Za-z_*][\w-]*|\s*\[[^\]]*\])*)(\s*\()?/g, m;
+    while ((m = re.exec(clean))) {
+      var head = m[2];
+      if (/^(true|false|null|NaN|Infinity)$/.test(head)) continue;
+      var parts = (m[3] || '').split('.').map(function (x) { return x.trim(); }).filter(Boolean);
+      out.push({ head: head, parts: parts, call: !!m[4] });
+    }
+    return out;
+  }
+
+  function lintWorkflow(text, Y) {
+    var problems = [], index = buildLineIndex(text), doc = null;
+    function add(sev, path, msg, why, line) {
+      problems.push({ sev: sev, line: line !== undefined ? line : lineOf(index, path), msg: msg, why: why || '' });
+    }
+
+    // tabs
+    text.split('\n').forEach(function (l, i) {
+      if (/^\s*\t/.test(l)) add('error', [], 'This line uses a tab for indentation.', 'YAML does not allow tabs for indentation. Use 2 spaces for each level.', i);
+    });
+
+    try {
+      doc = Y.load(text);
+    } catch (e) {
+      var ln = e.mark && typeof e.mark.line === 'number' ? e.mark.line : 0;
+      var reason = (e.reason || e.message || 'Syntax error').replace(/^./, function (c) { return c.toUpperCase(); });
+      var why = 'The file is not valid YAML, so GitHub cannot read it. Check the indentation and the colons on this line and the line above.';
+      var tl = text.split('\n'), cur = tl[ln] || '', ci = cur.match(/^ */)[0].length;
+      for (var b = ln - 1; b >= 0; b--) {
+        if (!tl[b].trim()) continue;
+        var bi = tl[b].match(/^ */)[0].length;
+        if (/^\s*- /.test(tl[b]) && bi === ci && !/^\s*- /.test(cur)) { why = 'This key starts at the same column as the `-` above it. Indent it 2 more spaces, so that it belongs to that list item.'; break; }
+        if (bi <= ci) break;
+      }
+      var afterKey = cur.replace(/^\s*(- )?[^:]+:\s*/, '');
+      if (/:\s/.test(afterKey) && !/^["'|>\[{]/.test(afterKey)) why = 'This value has a second `: ` in it. Put the value in quotes, or use `run: |` and write the command on the next line.';
+      add('error', [], 'YAML syntax error: ' + reason + '.', why, ln);
+      return { doc: null, problems: problems, index: index };
+    }
+    if (doc == null) { add('info', [], 'The editor is empty.', 'Start with `name:`, `on:` and `jobs:`.'); return { doc: null, problems: problems, index: index }; }
+    if (!isObj(doc)) { add('error', [], 'The workflow must be a YAML mapping (key: value pairs).', 'A workflow file starts with top-level keys such as `on:` and `jobs:`.'); return { doc: doc, problems: problems, index: index }; }
+
+    Object.keys(doc).forEach(function (k) {
+      if (TOP_KEYS.indexOf(k) === -1) {
+        var hint = '';
+        if (JOB_KEYS.indexOf(k) !== -1) hint = ' This key belongs inside a job. Check the indentation.';
+        add('error', [k], 'Unknown top-level key `' + k + '`.' + didYouMean(k, TOP_KEYS) + hint, 'Top-level keys are: ' + TOP_KEYS.join(', ') + '.');
+      }
+    });
+    if (!('on' in doc)) add('error', [], 'The workflow has no `on:` trigger.', 'Without `on:`, GitHub does not know when to run the workflow.');
+    if (!('jobs' in doc)) add('error', [], 'The workflow has no `jobs:` section.', 'A workflow needs at least one job.');
+
+    // ----- triggers -----
+    var events = normEvents(doc.on);
+    var inputs = {};
+    Object.keys(events).forEach(function (ev) {
+      var cfg = events[ev], p = ['on', ev];
+      if (EVENTS.indexOf(ev) === -1) { add('error', p, 'Unknown event `' + ev + '`.' + didYouMean(ev, EVENTS), 'Use an event name from the GitHub list of workflow triggers.'); return; }
+      if (ev === 'pull_request_target') add('warning', p, '`pull_request_target` runs with secrets and a write token, even for fork PRs.', 'Never check out or run code from the pull request in this trigger. Use `pull_request` for builds and tests.');
+      if ((ev === 'push' || ev === 'pull_request' || ev === 'pull_request_target') && isObj(cfg)) {
+        Object.keys(cfg).forEach(function (fk) {
+          if (FILTER_KEYS.indexOf(fk) === -1) add('error', p.concat(fk), 'Unknown filter `' + fk + '` for `' + ev + '`.' + didYouMean(fk, FILTER_KEYS), 'Valid filters are branches, tags, paths (and their -ignore forms) and types.');
+        });
+        if (cfg.branches && cfg['branches-ignore']) add('error', p, 'You cannot use `branches` and `branches-ignore` together on one event.', 'Use `branches` with `!` patterns to exclude branches instead.');
+        if (cfg.paths && cfg['paths-ignore']) add('error', p, 'You cannot use `paths` and `paths-ignore` together on one event.', 'Use `paths` with `!` patterns to exclude paths instead.');
+        ['branches', 'paths', 'tags'].forEach(function (f) { if (cfg[f] !== undefined && !Array.isArray(cfg[f])) add('warning', p.concat(f), '`' + f + '` should be a list.', 'Write it as `[main]` or as a list with `-` items.'); });
+      }
+      if (ev === 'schedule') {
+        if (!Array.isArray(cfg)) add('error', p, '`schedule` must be a list of `- cron:` items.', 'Example: `schedule:` then `  - cron: "0 21 * * 0-4"`.');
+        else cfg.forEach(function (c, i) {
+          if (!isObj(c) || typeof c.cron !== 'string') { add('error', p.concat(i), 'Each schedule item needs a `cron:` string.', 'Put the cron expression in quotes, because `*` has a special meaning in YAML.'); return; }
+          if (c.cron.trim().split(/\s+/).length !== 5) add('error', p.concat(i, 'cron'), 'A cron expression needs exactly 5 fields: minute hour day-of-month month day-of-week.', 'GitHub does not support seconds or a year field.');
+        });
+        if (Array.isArray(cfg) && cfg.length) add('info', p, 'Schedules run in UTC.', 'Convert your local time to UTC. India (IST) is UTC+5:30, so 02:30 IST is 21:00 UTC on the day before.');
+      }
+      if ((ev === 'workflow_dispatch' || ev === 'workflow_call') && isObj(cfg) && isObj(cfg.inputs)) {
+        var okTypes = ev === 'workflow_dispatch' ? ['string', 'boolean', 'choice', 'number', 'environment'] : ['string', 'boolean', 'number'];
+        Object.keys(cfg.inputs).forEach(function (name) {
+          var inp = cfg.inputs[name] || {}, ip = p.concat('inputs', name);
+          inputs[name] = inp;
+          if (ev === 'workflow_call' && !inp.type) add('error', ip, 'Input `' + name + '` needs a `type`.', 'Reusable workflow inputs must declare `type: string`, `boolean` or `number`.');
+          if (inp.type && okTypes.indexOf(inp.type) === -1) add('error', ip.concat('type'), 'Type `' + inp.type + '` is not valid for `' + ev + '` inputs.' + didYouMean(inp.type, okTypes), 'Valid types: ' + okTypes.join(', ') + '.');
+          if (inp.type === 'choice' && !Array.isArray(inp.options)) add('error', ip, 'A `choice` input needs an `options:` list.', 'List the allowed values under `options:`.');
+        });
+      }
+      if (ev === 'repository_dispatch' && isObj(cfg) && cfg.types && !Array.isArray(cfg.types)) add('warning', p.concat('types'), '`types` should be a list.', 'Example: `types: [deploy-finished]`.');
+    });
+
+    // ----- permissions -----
+    function checkPerms(perms, path) {
+      if (perms === undefined) return;
+      if (typeof perms === 'string') {
+        if (['read-all', 'write-all'].indexOf(perms) === -1) add('error', path, '`permissions` must be `read-all`, `write-all` or a map of scopes.', 'Example: `permissions:` then `  contents: read`.');
+        else if (perms === 'write-all') add('warning', path, '`write-all` gives the token every write permission.', 'Give only the scopes that the job needs.');
+        return;
+      }
+      if (!isObj(perms)) { add('error', path, '`permissions` must be a map of scopes.', ''); return; }
+      Object.keys(perms).forEach(function (s) {
+        var v = perms[s];
+        if (PERM_SCOPES.indexOf(s) === -1) add('error', path.concat(s), 'Unknown permission scope `' + s + '`.' + didYouMean(s, PERM_SCOPES), 'Valid scopes include contents, pull-requests, id-token, packages, issues, checks and actions.');
+        else if (['read', 'write', 'none'].indexOf(v) === -1) add('error', path.concat(s), 'Permission values are `read`, `write` or `none`.', '');
+        else if (s === 'id-token' && v === 'read') add('error', path.concat(s), '`id-token` accepts only `write` or `none`.', 'OIDC needs `id-token: write` to request a token.');
+      });
+    }
+    checkPerms(doc.permissions, ['permissions']);
+    if (doc.permissions === undefined && isObj(doc.jobs) && !Object.keys(doc.jobs).some(function (j) { return isObj(doc.jobs[j]) && doc.jobs[j].permissions !== undefined; }))
+      add('info', [], 'No `permissions:` block. The GITHUB_TOKEN gets the repository default permissions.', 'Add `permissions: contents: read` at the top, then give more only where a job needs it.');
+
+    if (isObj(doc.concurrency) && !doc.concurrency.group) add('error', ['concurrency'], '`concurrency` needs a `group`.', 'Example: `group: ${{ github.workflow }}-${{ github.ref }}`.');
+
+    // ----- jobs -----
+    var jobs = isObj(doc.jobs) ? doc.jobs : {};
+    if ('jobs' in doc && !isObj(doc.jobs)) add('error', ['jobs'], '`jobs` must be a map of job IDs.', 'Example: `jobs:` then `  test:` then the job keys.');
+    var jobIds = Object.keys(jobs);
+    var isPRT = 'pull_request_target' in events;
+
+    jobIds.forEach(function (jid) {
+      var job = jobs[jid], jp = ['jobs', jid];
+      if (!/^[A-Za-z_][A-Za-z0-9_-]*$/.test(jid)) add('error', jp, 'Job ID `' + jid + '` is not valid.', 'A job ID starts with a letter or `_` and has only letters, numbers, `-` and `_`.');
+      if (!isObj(job)) { add('error', jp, 'Job `' + jid + '` must be a map.', 'Indent the job keys under the job ID.'); return; }
+      var reusable = 'uses' in job;
+      Object.keys(job).forEach(function (k) {
+        var allowed = reusable ? REUSABLE_JOB_KEYS : JOB_KEYS;
+        if (allowed.indexOf(k) === -1) {
+          var hint = STEP_KEYS.indexOf(k) !== -1 ? ' This key belongs inside a step. Put it under `steps:` as `- ' + k + ': ...`.' : '';
+          if (reusable && JOB_KEYS.indexOf(k) !== -1) add('error', jp.concat(k), '`' + k + '` is not allowed in a job that calls a reusable workflow.', 'A calling job has only uses, with, secrets, needs, if, permissions, strategy and concurrency. The called workflow defines runs-on and steps.');
+          else add('error', jp.concat(k), 'Unknown job key `' + k + '`.' + didYouMean(k, JOB_KEYS) + hint, '');
+        }
+      });
+      if (reusable) {
+        if (!/^(\.\/\.github\/workflows\/[\w.-]+\.ya?ml|[\w.-]+\/[\w.-]+\/\.github\/workflows\/[\w.-]+\.ya?ml@[\w.\/-]+)$/.test(String(job.uses)))
+          add('error', jp.concat('uses'), 'A reusable workflow reference must be `owner/repo/.github/workflows/file.yml@ref` or `./.github/workflows/file.yml`.', 'The path must point to a file in `.github/workflows`.');
+        if (job.secrets !== undefined && job.secrets !== 'inherit' && !isObj(job.secrets)) add('error', jp.concat('secrets'), '`secrets` must be `inherit` or a map.', '');
+      } else {
+        if (job['runs-on'] === undefined) add('error', jp, 'Job `' + jid + '` has no `runs-on`.', 'Every job that has steps needs a runner, for example `runs-on: ubuntu-latest`.');
+        if (!Array.isArray(job.steps) || !job.steps.length) add('error', jp, 'Job `' + jid + '` has no `steps:` list.', 'Add `steps:` with at least one `- uses:` or `- run:` item.');
+      }
+      // needs
+      asList(job.needs).forEach(function (n) {
+        if (n === jid) add('error', jp.concat('needs'), 'Job `' + jid + '` cannot need itself.', '');
+        else if (jobIds.indexOf(n) === -1) add('error', jp.concat('needs'), '`needs` refers to `' + n + '`, but no job has that ID.' + didYouMean(n, jobIds), 'Use the job ID (the key under `jobs:`), not the job `name`.');
+      });
+      checkPerms(job.permissions, jp.concat('permissions'));
+      if (job['timeout-minutes'] !== undefined && typeof job['timeout-minutes'] !== 'number' && !/\$\{\{/.test(String(job['timeout-minutes']))) add('error', jp.concat('timeout-minutes'), '`timeout-minutes` must be a number.', '');
+      if (job.strategy !== undefined) {
+        if (!isObj(job.strategy) || job.strategy.matrix === undefined) add('error', jp.concat('strategy'), '`strategy` needs a `matrix`.', '');
+        else if (job.strategy['fail-fast'] !== undefined && typeof job.strategy['fail-fast'] !== 'boolean') add('error', jp.concat('strategy', 'fail-fast'), '`fail-fast` must be `true` or `false`.', '');
+      }
+      if (typeof job.if === 'string' && /\bsecrets\./.test(job.if)) add('error', jp.concat('if'), 'The `secrets` context is not available in `if:`.', 'Map the secret to an env variable at job level, then check `env.NAME != \'\'` in a step `if:`.');
+
+      // steps
+      var stepIds = [];
+      asList(job.steps).forEach(function (st, i) {
+        var sp = jp.concat('steps', i);
+        if (!isObj(st)) { add('error', sp, 'Step ' + (i + 1) + ' must be a map, for example `- run: npm test`.', ''); return; }
+        Object.keys(st).forEach(function (k) {
+          if (STEP_KEYS.indexOf(k) === -1) {
+            var hint = JOB_KEYS.indexOf(k) !== -1 ? ' This key belongs to the job, not to a step. Check the indentation.' : '';
+            add('error', sp.concat(k), 'Unknown step key `' + k + '`.' + didYouMean(k, STEP_KEYS) + hint, '');
+          }
+        });
+        if (st.uses && st.run) add('error', sp, 'A step can have `uses` or `run`, not both.', 'Split it into two steps.');
+        if (!st.uses && !st.run) add('error', sp, 'Step ' + (i + 1) + ' needs `uses:` or `run:`.', '`uses` runs an action. `run` runs shell commands.');
+        if (st.id !== undefined) {
+          if (!/^[A-Za-z_][A-Za-z0-9_-]*$/.test(String(st.id))) add('error', sp.concat('id'), 'Step id `' + st.id + '` is not valid.', 'An id starts with a letter or `_`.');
+          if (stepIds.indexOf(st.id) !== -1) add('error', sp.concat('id'), 'Step id `' + st.id + '` is used twice in this job.', 'Each step id must be unique in its job.');
+          stepIds.push(st.id);
+        }
+        if (st.shell && SHELLS.indexOf(st.shell) === -1 && !/\{0\}/.test(st.shell)) add('warning', sp.concat('shell'), 'Unknown shell `' + st.shell + '`.', 'Common shells: bash, sh, pwsh, python.');
+        if (typeof st.if === 'string' && /\bsecrets\./.test(st.if)) add('error', sp.concat('if'), 'The `secrets` context is not available in `if:`.', 'Put the secret in `env:` and test `env.NAME != \'\'` instead.');
+        if (st.uses) {
+          var u = String(st.uses);
+          if (/^(\.\/|docker:\/\/)/.test(u)) { /* local or docker */ }
+          else if (u.indexOf('@') === -1) add('error', sp.concat('uses'), '`' + u + '` has no version. Add `@` and a tag or commit SHA.', 'Example: `actions/checkout@v4`. Without a ref, GitHub cannot resolve the action.');
+          else if (!/^[\w.-]+\/[\w.\/-]+@[\w.\/-]+$/.test(u)) add('error', sp.concat('uses'), '`' + u + '` is not a valid action reference.', 'Use `owner/repo@ref` or `owner/repo/path@ref`.');
+          else {
+            var an = actionName(u), ref = actionRef(u), mm = ref.match(/^v(\d+)/);
+            if (/^(main|master|latest)$/.test(ref)) add('warning', sp.concat('uses'), '`@' + ref + '` follows a moving branch.', 'Pin to a release tag, or to a full commit SHA for third-party actions.');
+            if (MIN_MAJOR[an] && mm && +mm[1] < MIN_MAJOR[an][0]) {
+              var dead = (an === 'actions/upload-artifact' || an === 'actions/download-artifact') && +mm[1] <= 3;
+              add(dead ? 'error' : 'warning', sp.concat('uses'), '`' + an + '@' + ref + '` is outdated. Use ' + MIN_MAJOR[an][1] + '.', dead ? 'Artifact actions v3 stopped working on January 30, 2025.' : 'Old majors run on deprecated Node versions.');
+            }
+            if (!/^(actions|github)\//.test(an) && !/^[0-9a-f]{40}$/.test(ref)) add('info', sp.concat('uses'), 'Third-party action `' + an + '` is pinned to a tag, not a commit SHA.', 'A tag can move. A full commit SHA is the only immutable reference. Many teams require SHA pins.');
+            (REQUIRED_WITH[an] || []).forEach(function (req) {
+              if (!isObj(st.with) || st.with[req] === undefined) add('error', sp.concat('with'), '`' + an + '` needs the input `' + req + '`.', '');
+            });
+            if (an === 'aws-actions/configure-aws-credentials' && isObj(st.with)) {
+              if (st.with['aws-access-key-id'] || st.with['aws-secret-access-key']) add('warning', sp.concat('with'), 'This step uses long-lived AWS access keys.', 'Use OIDC instead: `role-to-assume` plus `permissions: id-token: write`. Then no AWS key is stored in GitHub.');
+              else if (!st.with['role-to-assume']) add('error', sp.concat('with'), '`configure-aws-credentials` needs `role-to-assume` (or access keys).', '');
+            }
+            if (an === 'actions/checkout' && isPRT && isObj(st.with) && /github\.event\.pull_request\.head|github\.head_ref/.test(String(st.with.ref || '') + String(st.with.repository || '')))
+              add('error', sp.concat('with'), 'This checks out untrusted PR code inside `pull_request_target`.', 'The code runs with secrets and a write token. An attacker can steal them. Use `pull_request` instead.');
+          }
+          if (st.with !== undefined && !isObj(st.with)) add('error', sp.concat('with'), '`with` must be a map of inputs.', '');
+        }
+        if (typeof st.run === 'string') {
+          if (/::set-output\s/.test(st.run)) add('error', sp.concat('run'), '`::set-output` is deprecated.', 'Write `echo "name=value" >> "$GITHUB_OUTPUT"` instead.');
+          if (/::save-state\s/.test(st.run)) add('error', sp.concat('run'), '`::save-state` is deprecated.', 'Write to `$GITHUB_STATE` instead.');
+          exprs(st.run).forEach(function (e) {
+            if (/github\.(event\.(pull_request|issue|comment|review|review_comment|discussion|head_commit|commits|pages)[\w.\[\]*]*\.(title|body|message|name|email|label|ref|head_ref|default_branch)|head_ref)/.test(e))
+              add('warning', sp.concat('run'), 'Possible script injection: `${{' + e + '}}` is user-controlled text inside `run:`.', 'An attacker can put shell commands in a PR title or branch name. Pass the value through `env:` and use `"$VAR"` in the script.');
+          });
+        }
+      });
+    });
+
+    // cycles in needs
+    var state = {};
+    function visit(j, trail) {
+      if (state[j] === 2) return; if (state[j] === 1) { add('error', ['jobs', j, 'needs'], 'Circular `needs`: ' + trail.concat(j).join(' → ') + '.', 'Jobs cannot wait for each other in a loop.'); return; }
+      state[j] = 1; asList(isObj(jobs[j]) ? jobs[j].needs : null).forEach(function (n) { if (jobs[n]) visit(n, trail.concat(j)); }); state[j] = 2;
+    }
+    jobIds.forEach(function (j) { visit(j, []); });
+
+    // ----- expressions -----
+    strings(doc, [], []).forEach(function (it) {
+      var s = it.s, p = it.path;
+      var opens = (s.match(/\$\{\{/g) || []).length, closes = (s.match(/\}\}/g) || []).length;
+      if (opens > closes) add('error', p, 'An expression starts with `${{` but has no closing `}}`.', '');
+      var jid = p[0] === 'jobs' ? p[1] : null, job = jid && isObj(jobs[jid]) ? jobs[jid] : null;
+      var stepIdx = job && p[2] === 'steps' ? p[3] : null;
+      exprs(s).forEach(function (e) {
+        chains(e).forEach(function (c) {
+          if (c.call) { if (!c.parts.length && FUNCS.indexOf(c.head) === -1) add('error', p, 'Unknown function `' + c.head + '()`.' + didYouMean(c.head, FUNCS), ''); return; }
+          if (CONTEXTS.indexOf(c.head) === -1) { add('error', p, 'Unknown context `' + c.head + '`.' + didYouMean(c.head, CONTEXTS), 'Contexts: ' + CONTEXTS.join(', ') + '.'); return; }
+          var a = c.parts[0];
+          if (c.head === 'steps' && a && job) {
+            var ids = asList(job.steps).map(function (st, i) { return isObj(st) && (stepIdx === null || i < stepIdx) ? st.id : null; }).filter(Boolean);
+            if (ids.indexOf(a) === -1) add('error', p, '`steps.' + a + '` refers to a step id that does not exist' + (stepIdx !== null ? ' before this step' : '') + '.' + didYouMean(a, ids), 'Give the earlier step `id: ' + a + '`. A step can read only the outputs of earlier steps in the same job.');
+            else if (c.parts[1] && ['outputs', 'outcome', 'conclusion'].indexOf(c.parts[1]) === -1) add('error', p, '`steps.' + a + '.' + c.parts[1] + '` is not valid.', 'Use `.outputs.NAME`, `.outcome` or `.conclusion`.');
+          }
+          if (c.head === 'needs' && a && job) {
+            var nl = asList(job.needs);
+            if (nl.indexOf(a) === -1) add('error', p, '`needs.' + a + '` is used, but `' + a + '` is not in this job\'s `needs:` list.', 'Add `' + a + '` to `needs:`. A job can read outputs only from jobs that it needs.');
+          }
+          if (c.head === 'matrix' && a && job) {
+            var mx = isObj(job.strategy) ? job.strategy.matrix : null;
+            var keys = isObj(mx) ? Object.keys(mx).filter(function (k) { return k !== 'include' && k !== 'exclude'; }) : [];
+            if (isObj(mx)) asList(mx.include).forEach(function (inc) { if (isObj(inc)) keys = keys.concat(Object.keys(inc)); });
+            if (!mx) add('error', p, '`matrix.' + a + '` is used, but this job has no `strategy.matrix`.', '');
+            else if (typeof mx === 'object' && keys.indexOf(a) === -1) add('error', p, '`matrix.' + a + '` is not a key of this job\'s matrix.' + didYouMean(a, keys), '');
+          }
+          if (c.head === 'inputs' && a && Object.keys(inputs).length && !(a in inputs)) add('error', p, '`inputs.' + a + '` is not declared under `workflow_dispatch` or `workflow_call` inputs.' + didYouMean(a, Object.keys(inputs)), '');
+          if (c.head === 'secrets' && (p[p.length - 1] === 'if')) { /* reported above */ }
+        });
+      });
+    });
+
+    problems.sort(function (a, b) { var r = { error: 0, warning: 1, info: 2 }; return r[a.sev] - r[b.sev] || a.line - b.line; });
+    // de-duplicate
+    var seen = {};
+    problems = problems.filter(function (x) { var k = x.line + x.msg; if (seen[k]) return false; seen[k] = 1; return true; });
+    return { doc: doc, problems: problems, index: index };
+  }
+
+  var api = { lintWorkflow: lintWorkflow, buildLineIndex: buildLineIndex, lineOf: lineOf, normEvents: normEvents, asList: asList, isObj: isObj, actionName: actionName, actionRef: actionRef, exprs: exprs };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api; else global.WBLint = api;
+})(this);
+
+/* Actions Workbench: plain-language explainer (ASD-STE100 style).
+   explainWorkflow(doc) -> [{h: heading, items: [html strings]}] */
+(function (global) {
+  'use strict';
+  var L = (typeof module !== 'undefined' && module.exports) ? require('./lint.js') : global.WBLint;
+  var isObj = L.isObj, asList = L.asList;
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function code(s) { return '<code>' + esc(s) + '</code>'; }
+  function list(a) { a = a.map(String); return a.length <= 1 ? (a[0] || '') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]; }
+  function codes(a) { return list(asList(a).map(code)); }
+
+  var DOW = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  var DOWN = { SUN: 0, MON: 1, TUE: 2, WED: 3, THU: 4, FRI: 5, SAT: 6 };
+  function dowText(f) {
+    if (f === '*') return 'every day';
+    var parts = f.split(',').map(function (p) {
+      var r = p.split('-').map(function (x) { x = x.toUpperCase(); return x in DOWN ? DOWN[x] : +x % 7; });
+      return r.length === 2 ? DOW[r[0]] + ' to ' + DOW[r[1]] : DOW[r[0]];
+    });
+    return 'on ' + list(parts);
+  }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function cronText(c) {
+    var f = String(c).trim().split(/\s+/);
+    if (f.length !== 5) return 'with the cron expression ' + code(c);
+    var mi = f[0], hr = f[1], dom = f[2], mon = f[3], dow = f[4], when;
+    if (/^\d+$/.test(mi) && /^\d+$/.test(hr)) {
+      var utc = +hr * 60 + +mi, ist = (utc + 330) % 1440, next = utc + 330 >= 1440;
+      when = 'at ' + pad(+hr) + ':' + pad(+mi) + ' UTC (' + pad(Math.floor(ist / 60)) + ':' + pad(ist % 60) + ' IST' + (next ? ', the next day' : '') + ')';
+    } else if (/^\*\/\d+$/.test(mi) && hr === '*') when = 'every ' + mi.slice(2) + ' minutes';
+    else if (/^\d+$/.test(mi) && hr === '*') when = 'every hour at minute ' + mi;
+    else when = 'on the schedule ' + code(c);
+    var days = dow !== '*' ? dowText(dow) : (dom !== '*' ? 'on day ' + dom + ' of the month' : 'every day');
+    if (mon !== '*') days += ' in month ' + mon;
+    return when + ', ' + days;
+  }
+
+  var ACTIONS = {
+    'actions/checkout': 'checks out the repository code into the runner',
+    'actions/setup-node': 'installs Node.js',
+    'actions/setup-python': 'installs Python',
+    'actions/setup-java': 'installs a Java JDK',
+    'actions/cache': 'restores a cache and saves it again at the end of the job',
+    'actions/upload-artifact': 'uploads files as an artifact',
+    'actions/download-artifact': 'downloads an artifact from an earlier job',
+    'actions/github-script': 'runs a short JavaScript script against the GitHub API',
+    'aws-actions/configure-aws-credentials': 'gets AWS credentials for the job',
+    'aws-actions/amazon-ecr-login': 'logs in to Amazon ECR',
+    'docker/login-action': 'logs in to a container registry',
+    'docker/build-push-action': 'builds a Docker image and can push it',
+    'docker/setup-buildx-action': 'sets up Docker Buildx',
+    'slackapi/slack-github-action': 'sends a message to Slack',
+  };
+
+  function triggerItems(on) {
+    var ev = L.normEvents(on), out = [];
+    Object.keys(ev).forEach(function (name) {
+      var c = ev[name], t;
+      switch (name) {
+        case 'push':
+        case 'pull_request':
+        case 'pull_request_target': {
+          var what = name === 'push' ? 'when someone pushes commits' : (name === 'pull_request' ? 'when a pull request is opened or updated' : 'for pull requests, in the context of the base repository (with secrets)');
+          var b = isObj(c) ? c : {}, bits = [];
+          if (b.branches) bits.push((name === 'push' ? 'to ' : 'that target ') + (asList(b.branches).length > 1 ? 'the branches ' : 'the branch ') + codes(b.branches));
+          if (b['branches-ignore']) bits.push('except on ' + codes(b['branches-ignore']));
+          if (b.tags) bits.push('for tags ' + codes(b.tags));
+          if (b.types) bits.push('for the activity types ' + codes(b.types));
+          if (b.paths) bits.push('only when a changed file matches ' + codes(b.paths));
+          if (b['paths-ignore']) bits.push('but not when only ' + codes(b['paths-ignore']) + ' change');
+          t = 'It runs ' + what + (bits.length ? ' ' + bits.join(', ') : '') + '.';
+          break;
+        }
+        case 'schedule':
+          t = asList(c).filter(isObj).map(function (x) { return 'It runs on a schedule ' + cronText(x.cron) + '.'; }).join(' ') || 'It runs on a schedule.';
+          break;
+        case 'workflow_dispatch': {
+          var ins = isObj(c) && isObj(c.inputs) ? Object.keys(c.inputs) : [];
+          t = 'A person can start it by hand from the Actions tab' + (ins.length ? ', with the inputs ' + codes(ins) : '') + '.';
+          break;
+        }
+        case 'workflow_call': {
+          var ci = isObj(c) && isObj(c.inputs) ? Object.keys(c.inputs) : [], cs = isObj(c) && isObj(c.secrets) ? Object.keys(c.secrets) : [];
+          t = 'Other workflows can call it as a reusable workflow' + (ci.length ? '. It takes the inputs ' + codes(ci) : '') + (cs.length ? ' and the secrets ' + codes(cs) : '') + '.';
+          break;
+        }
+        case 'repository_dispatch':
+          t = 'An external system can start it with an API call' + (isObj(c) && c.types ? ' of type ' + codes(c.types) : '') + '. The data arrives in ' + code('github.event.client_payload') + '.';
+          break;
+        case 'workflow_run':
+          t = 'It runs after another workflow' + (isObj(c) && c.workflows ? ' (' + codes(c.workflows) + ')' : '') + ' finishes or starts.';
+          break;
+        case 'release':
+          t = 'It runs when a release' + (isObj(c) && c.types ? ' is ' + list(asList(c.types)) : ' changes') + '.';
+          break;
+        default:
+          t = 'It runs on the ' + code(name) + ' event.';
+      }
+      out.push(t);
+    });
+    return out;
+  }
+
+  function permText(p) {
+    if (p === undefined) return null;
+    if (typeof p === 'string') return 'The token gets ' + code(p) + ' permissions.';
+    if (!isObj(p) || !Object.keys(p).length) return 'The token gets no permissions.';
+    return 'The token gets only ' + list(Object.keys(p).map(function (k) { return code(k + ': ' + p[k]); })) + '. All other scopes are none.';
+  }
+
+  function stepText(st, i) {
+    if (!isObj(st)) return 'Step ' + (i + 1) + ' is not valid.';
+    var lead = 'Step ' + (i + 1) + (st.name ? ' (' + esc(st.name) + ')' : '');
+    var s;
+    if (st.uses) {
+      var an = L.actionName(st.uses);
+      var does = ACTIONS[an];
+      if (/^\.\//.test(st.uses)) does = 'runs a local action from ' + code(st.uses);
+      s = lead + ' uses ' + code(st.uses) + '. It ' + (does || 'runs this action') + '.';
+      if (isObj(st.with)) {
+        var w = st.with, extra = [];
+        if (an === 'actions/setup-node' && w['node-version']) extra.push('Node version: ' + code(w['node-version']));
+        if (an === 'actions/setup-node' && w.cache) extra.push('It also caches ' + code(w.cache) + ' downloads');
+        if (an === 'actions/cache' && w.key) extra.push('The cache key is ' + code(w.key));
+        if (an === 'actions/upload-artifact' || an === 'actions/download-artifact') { if (w.name) extra.push('Artifact name: ' + code(w.name)); if (w.path) extra.push('Path: ' + code(w.path)); }
+        if (an === 'aws-actions/configure-aws-credentials') {
+          if (w['role-to-assume']) extra.push('It assumes the IAM role ' + code(w['role-to-assume']) + ' with OIDC. No AWS key is stored in GitHub');
+          if (w['aws-access-key-id']) extra.push('It uses stored AWS access keys');
+        }
+        if (an === 'actions/checkout' && w.ref) extra.push('It checks out the ref ' + code(w.ref));
+        if (extra.length) s += ' ' + extra.join('. ') + '.';
+      }
+    } else if (st.run) {
+      var lines = String(st.run).trim().split('\n').filter(function (l) { return l.trim() && !/^\s*#/.test(l); });
+      s = lead + ' runs ' + (lines.length > 1 ? lines.length + ' shell commands, starting with ' : 'the shell command ') + code(lines[0] || '') + '.';
+      if (/GITHUB_OUTPUT/.test(st.run)) s += ' It writes an output' + (st.id ? ' that later steps read as ' + code('steps.' + st.id + '.outputs.<name>') : '') + '.';
+      if (/GITHUB_STEP_SUMMARY/.test(st.run)) s += ' It writes Markdown to the job summary page.';
+      if (/GITHUB_ENV/.test(st.run)) s += ' It sets an environment variable for the next steps.';
+    } else s = lead + ' has no action and no command.';
+    if (st.if) s += ' It runs only if ' + code(st.if) + '.';
+    if (st['continue-on-error']) s += ' A failure here does not fail the job.';
+    if (isObj(st.env)) s += ' It sets ' + codes(Object.keys(st.env)) + ' in its environment.';
+    return s;
+  }
+
+  function stages(jobs) {
+    var ids = Object.keys(jobs), level = {}, guard = 0;
+    function lv(j, seen) {
+      if (level[j] !== undefined) return level[j];
+      if (seen.indexOf(j) !== -1 || ++guard > 500) return 0;
+      var n = asList(isObj(jobs[j]) ? jobs[j].needs : null).filter(function (x) { return jobs[x]; });
+      level[j] = n.length ? 1 + Math.max.apply(null, n.map(function (x) { return lv(x, seen.concat(j)); })) : 0;
+      return level[j];
+    }
+    ids.forEach(function (j) { lv(j, []); });
+    var by = []; ids.forEach(function (j) { (by[level[j]] = by[level[j]] || []).push(j); });
+    return by.filter(Boolean);
+  }
+
+  function explainWorkflow(doc) {
+    var out = [];
+    if (!isObj(doc)) return out;
+    var head = [];
+    if (doc.name) head.push('The workflow is named ' + code(doc.name) + '.');
+    if (doc['run-name']) head.push('Each run shows the title ' + code(doc['run-name']) + '.');
+    head = head.concat(triggerItems(doc.on));
+    var pt = permText(doc.permissions);
+    head.push(pt || 'There is no top-level ' + code('permissions') + ' block, so the token gets the repository default permissions.');
+    if (isObj(doc.concurrency)) head.push('Only one run per group ' + code(doc.concurrency.group) + ' can run at a time.' + (doc.concurrency['cancel-in-progress'] ? ' A new run cancels the older run that is still in progress.' : ' A new run waits for the older run.'));
+    else if (typeof doc.concurrency === 'string') head.push('Only one run in the group ' + code(doc.concurrency) + ' runs at a time.');
+    if (isObj(doc.env)) head.push('All jobs get the environment variables ' + codes(Object.keys(doc.env)) + '.');
+    out.push({ h: 'When it runs', items: head });
+
+    var jobs = isObj(doc.jobs) ? doc.jobs : {};
+    var st = stages(jobs);
+    if (st.length) {
+      var order = st.map(function (g, i) {
+        return (st.length > 1 ? 'Stage ' + (i + 1) + ': ' : '') + (g.length > 1 ? codes(g) + ' run in parallel' : code(g[0]) + ' runs') + (i ? ' after the jobs that ' + (g.length > 1 ? 'they need' : 'it needs') : '') + '.';
+      });
+      out.push({ h: 'Job order', items: order });
+    }
+    Object.keys(jobs).forEach(function (jid) {
+      var j = jobs[jid], items = [];
+      if (!isObj(j)) return;
+      if (j.uses) {
+        items.push('This job calls the reusable workflow ' + code(j.uses) + '. That workflow defines the runner and the steps.');
+        if (isObj(j.with)) items.push('It passes the inputs ' + list(Object.keys(j.with).map(function (k) { return code(k + ': ' + j.with[k]); })) + '.');
+        if (j.secrets === 'inherit') items.push('It passes all secrets of the caller (' + code('secrets: inherit') + ').');
+        else if (isObj(j.secrets)) items.push('It passes the secrets ' + codes(Object.keys(j.secrets)) + '.');
+      } else {
+        var ro = j['runs-on'];
+        if (ro !== undefined) items.push('It runs on ' + (Array.isArray(ro) ? 'a runner with the labels ' + codes(ro) : (isObj(ro) ? 'a runner from the group ' + code(ro.group || '?') + (ro.labels ? ' with labels ' + codes(ro.labels) : '') : code(ro))) + '.');
+      }
+      if (j.needs) {
+        var many = asList(j.needs).length > 1;
+        if (/always\(\)|cancelled\(\)|failure\(\)/.test(String(j.if || ''))) items.push('It starts after ' + codes(j.needs) + ' finish' + (many ? '' : 'es') + '. Because of its ' + code('if') + ', it can run even when ' + (many ? 'they fail' : 'it fails') + '.');
+        else items.push('It starts only after ' + codes(j.needs) + ' succeed' + (many ? '' : 's') + '.');
+      }
+      if (j.if) items.push('It runs only if ' + code(j.if) + '.');
+      if (j.environment) items.push('It deploys to the environment ' + code(isObj(j.environment) ? j.environment.name : j.environment) + '. Protection rules of that environment, such as required reviewers, apply.');
+      var jp = permText(j.permissions); if (jp) items.push(jp.replace('The token', 'In this job, the token'));
+      if (isObj(j.strategy) && isObj(j.strategy.matrix)) {
+        var m = j.strategy.matrix, dims = Object.keys(m).filter(function (k) { return k !== 'include' && k !== 'exclude'; });
+        var n = dims.reduce(function (a, k) { return a * (Array.isArray(m[k]) ? m[k].length : 1); }, dims.length ? 1 : 0) + asList(m.include).length - asList(m.exclude).length;
+        items.push('A matrix makes ' + n + ' copies of this job, one for each combination of ' + codes(dims.length ? dims : ['include']) + '.' + (j.strategy['fail-fast'] === false ? ' One failed copy does not cancel the others.' : ' By default, one failed copy cancels the others.'));
+      }
+      if (j['timeout-minutes']) items.push('GitHub stops it after ' + j['timeout-minutes'] + ' minutes.');
+      if (isObj(j.outputs)) items.push('It gives the outputs ' + codes(Object.keys(j.outputs)) + ' to the jobs that need it.');
+      asList(j.steps).forEach(function (s, i) { items.push(stepText(s, i)); });
+      out.push({ h: 'Job ' + jid + (j.name ? ' (' + j.name + ')' : ''), items: items, job: true });
+    });
+    return out;
+  }
+
+  var api = { explainWorkflow: explainWorkflow, cronText: cronText };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api; else global.WBExplain = api;
+})(this);
+
+/* Actions Workbench: scenario bank. YAML text comes from WB_YAML (built from yaml_bank.py).
+   Each check: { label, test(ctx) -> boolean, hint } */
+(function (global) {
+  'use strict';
+  var L = (typeof module !== 'undefined' && module.exports) ? require('./lint.js') : global.WBLint;
+  var isObj = L.isObj, asList = L.asList;
+
+  // ---------- helpers for checks ----------
+  function H(doc, text) {
+    var h = {};
+    h.doc = isObj(doc) ? doc : {};
+    h.text = text;
+    h.ev = function () { return L.normEvents(h.doc.on); };
+    h.has = function (e) { return e in h.ev(); };
+    h.evCfg = function (e) { var c = h.ev()[e]; return isObj(c) ? c : {}; };
+    h.jobs = function () { return isObj(h.doc.jobs) ? h.doc.jobs : {}; };
+    h.job = function (id) { var j = h.jobs()[id]; return isObj(j) ? j : null; };
+    h.jobList = function () { var js = h.jobs(); return Object.keys(js).filter(function (k) { return isObj(js[k]); }).map(function (k) { return { id: k, job: js[k] }; }); };
+    h.steps = function (job) { return asList(job && job.steps).filter(isObj); };
+    h.allSteps = function () { var out = []; h.jobList().forEach(function (j) { h.steps(j.job).forEach(function (s, i) { out.push({ jid: j.id, job: j.job, step: s, i: i }); }); }); return out; };
+    h.uses = function (step, name, minMajor) {
+      if (!step || !step.uses) return false;
+      var an = L.actionName(step.uses); if (an !== name) return false;
+      if (!minMajor) return true;
+      var m = L.actionRef(step.uses).match(/^v(\d+)/); return m ? +m[1] >= minMajor : /^[0-9a-f]{40}$/.test(L.actionRef(step.uses));
+    };
+    h.findStep = function (pred) { return h.allSteps().filter(function (x) { return pred(x.step, x); })[0] || null; };
+    h.runs = function (job) { return h.steps(job).map(function (s) { return String(s.run || ''); }).join('\n'); };
+    h.allText = function (x) { return JSON.stringify(x === undefined ? h.doc : x) || ''; };
+    h.str = function (x) { return x === undefined || x === null ? '' : String(x); };
+    h.needs = function (job) { return asList(job && job.needs); };
+    h.perm = function (perms, scope) { return isObj(perms) ? perms[scope] : (perms === 'write-all' ? 'write' : perms === 'read-all' ? 'read' : undefined); };
+    h.listHas = function (list, v) { return asList(list).map(String).indexOf(String(v)) !== -1; };
+    return h;
+  }
+  function dowSet(f) {
+    var N = { SUN: 0, MON: 1, TUE: 2, WED: 3, THU: 4, FRI: 5, SAT: 6 }, set = {};
+    if (f === '*') { for (var i = 0; i < 7; i++) set[i] = 1; return set; }
+    f.split(',').forEach(function (p) {
+      var r = p.split('-').map(function (x) { x = x.toUpperCase(); return x in N ? N[x] : +x % 7; });
+      if (r.length === 2) for (var d = r[0]; d <= r[1]; d++) set[d] = 1; else set[r[0]] = 1;
+    });
+    return set;
+  }
+
+  var LEVELS = [
+    { id: 1, name: 'Basics', desc: 'Triggers, one job, steps.' },
+    { id: 2, name: 'Jobs and data', desc: 'Job order, matrix, cache, artifacts, outputs, conditions.' },
+    { id: 3, name: 'Platform and security', desc: 'The G1–G7 interview topics: reusable workflows, speed, secrets, runners, releases, reporting.' },
+  ];
+
+  var S = [
+    { id: 'first-ci', level: 1, topic: 'Basics', title: 'Your first CI workflow',
+      story: 'The `results-ui` repository has no CI. Developers merge code that breaks the tests. Run the tests on every push to `main` and on every pull request that targets `main`.',
+      tasks: ['Trigger on `push` to `main` and on `pull_request` that targets `main`.', 'Add one job on `ubuntu-latest`.', 'Check out the code, install Node.js 20, run `npm ci`, then run `npm test`.'],
+      checks: [
+        { label: 'Runs on push to main', test: function (h) { return h.has('push') && h.listHas(h.evCfg('push').branches, 'main'); }, hint: 'Under `on:`, add `push:` with `branches: [main]`.' },
+        { label: 'Runs on pull requests that target main', test: function (h) { return h.has('pull_request') && h.listHas(h.evCfg('pull_request').branches, 'main'); }, hint: 'Add `pull_request:` with `branches: [main]`. For pull requests, `branches` filters the target branch.' },
+        { label: 'A job runs on ubuntu-latest', test: function (h) { return h.jobList().some(function (j) { return j.job['runs-on'] === 'ubuntu-latest'; }); }, hint: 'Add `runs-on: ubuntu-latest` to the job.' },
+        { label: 'Checks out the code', test: function (h) { return !!h.findStep(function (s) { return h.uses(s, 'actions/checkout', 4); }); }, hint: 'The runner starts empty. Add `- uses: actions/checkout@v4` as the first step.' },
+        { label: 'Installs Node.js 20', test: function (h) { return !!h.findStep(function (s) { return h.uses(s, 'actions/setup-node', 4) && isObj(s.with) && /^20/.test(h.str(s.with['node-version'])); }); }, hint: 'Add `actions/setup-node@v4` with `node-version: 20` under `with:`.' },
+        { label: 'Runs npm ci, then npm test', test: function (h) { var t = h.allSteps().map(function (x) { return h.str(x.step.run); }).join('\n'); var a = t.indexOf('npm ci'), b = t.indexOf('npm test'); return a !== -1 && b > a; }, hint: 'Add `- run: npm ci` and then `- run: npm test`. `npm ci` installs the exact versions from the lock file.' },
+      ],
+      explain: 'The two triggers cover direct pushes and pull requests. The runner starts empty, so the first step checks out the code. `setup-node` installs a fixed Node.js version, so every run uses the same tool. `npm ci` installs exactly what the lock file lists, which makes builds repeatable. The `permissions` block gives the token read access only.',
+      docs: 'https://docs.github.com/en/actions/writing-workflows/quickstart' },
+
+    { id: 'manual-choice', level: 1, topic: 'Basics', title: 'A manual run with inputs',
+      story: 'Release managers want a button to start a deploy. They must pick the environment from a list, and they want a dry-run option that is on by default.',
+      tasks: ['Use `workflow_dispatch`.', 'Add an input `environment`: a choice of `staging` or `production`, default `staging`.', 'Add an input `dry_run`: a boolean, default `true`.', 'Print both values in a step.'],
+      checks: [
+        { label: 'Can be started by hand', test: function (h) { return h.has('workflow_dispatch'); }, hint: 'Add `workflow_dispatch:` under `on:`.' },
+        { label: '`environment` is a choice of staging and production', test: function (h) { var i = (h.evCfg('workflow_dispatch').inputs || {}).environment || {}; return i.type === 'choice' && h.listHas(i.options, 'staging') && h.listHas(i.options, 'production'); }, hint: 'Under `inputs:`, add `environment:` with `type: choice` and `options: [staging, production]`.' },
+        { label: '`environment` defaults to staging', test: function (h) { var i = (h.evCfg('workflow_dispatch').inputs || {}).environment || {}; return i.default === 'staging'; }, hint: 'Add `default: staging` to the input.' },
+        { label: '`dry_run` is a boolean that defaults to true', test: function (h) { var i = (h.evCfg('workflow_dispatch').inputs || {}).dry_run || {}; return i.type === 'boolean' && i.default === true; }, hint: 'Add `dry_run:` with `type: boolean` and `default: true`.' },
+        { label: 'A step reads both inputs', test: function (h) { var t = h.allText(h.doc.jobs); return /inputs\.environment/.test(t) && /inputs\.dry_run/.test(t); }, hint: 'Use `${{ inputs.environment }}` and `${{ inputs.dry_run }}`. Pass them through `env:` and print `$TARGET` in `run:`.' },
+      ],
+      explain: 'A `choice` input shows a drop-down list, so nobody can type a wrong environment name. Passing inputs through `env:` and reading `$TARGET` in the script is safer than putting `${{ }}` directly in `run:`. The boolean arrives as `true` or `false`.',
+      docs: 'https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#workflow_dispatch' },
+
+    { id: 'nightly-utc', level: 1, topic: 'Basics', title: 'Nightly run at 02:30 IST',
+      story: 'The QA lead in Noida wants the full E2E suite every weekday night at 02:30 IST (Monday to Friday nights). The current cron fires at the wrong time. The team also wants to start the run by hand.',
+      tasks: ['Fix the cron so that it runs at 02:30 IST, Monday to Friday.', 'Allow a manual run.', 'Install dependencies and the Playwright browsers before the tests.'],
+      checks: [
+        { label: 'Cron is 21:00 UTC (02:30 IST)', test: function (h) { return asList(h.ev().schedule).some(function (c) { var f = isObj(c) ? h.str(c.cron).trim().split(/\s+/) : []; return f.length === 5 && +f[0] === 0 && +f[1] === 21; }); }, hint: 'GitHub cron uses UTC. IST is UTC+5:30, so 02:30 IST is 21:00 UTC on the day before.' },
+        { label: 'Days are Sunday to Thursday in UTC', test: function (h) { return asList(h.ev().schedule).some(function (c) { var f = isObj(c) ? h.str(c.cron).trim().split(/\s+/) : []; if (f.length !== 5) return false; var s = dowSet(f[4]); return [0, 1, 2, 3, 4].every(function (d) { return s[d]; }) && !s[5] && !s[6]; }); }, hint: '02:30 IST on Monday is 21:00 UTC on Sunday. So the UTC days are Sunday (0) to Thursday (4): `0-4`.' },
+        { label: 'Can be started by hand', test: function (h) { return h.has('workflow_dispatch'); }, hint: 'Add `workflow_dispatch:` under `on:`.' },
+        { label: 'Installs dependencies and browsers first', test: function (h) { var t = h.allSteps().map(function (x) { return h.str(x.step.run); }).join('\n'); return /npm ci/.test(t) && /playwright install/.test(t) && t.indexOf('playwright install') < t.indexOf('playwright test'); }, hint: 'Add `npm ci` and `npx playwright install --with-deps` before `npx playwright test`.' },
+      ],
+      explain: 'All GitHub schedules are in UTC. The day of week also moves when the time crosses midnight: Monday 02:30 IST is Sunday 21:00 UTC. So `0 21 * * 0-4` is correct. Scheduled runs can start some minutes late at busy times, so avoid the full hour if timing matters.',
+      docs: 'https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#schedule' },
+
+    { id: 'path-filters', level: 1, topic: 'Basics', title: 'Run only when code changes',
+      story: 'Unit tests run on every pull request, including documentation-only changes. That wastes runner minutes. The current file also has an error.',
+      tasks: ['Run only when files in `src/` change, or `package.json`, or `package-lock.json`.', 'Do not run for Markdown files inside `src/`.', 'Fix the filter error.'],
+      checks: [
+        { label: 'No `paths` and `paths-ignore` together', test: function (h) { var c = h.evCfg('pull_request'); return !(c.paths && c['paths-ignore']); }, hint: 'GitHub does not allow both on one event. Use only `paths`, with a `!` pattern to exclude files.' },
+        { label: 'Watches src/**', test: function (h) { return h.listHas(h.evCfg('pull_request').paths, 'src/**'); }, hint: 'Add `"src/**"` to `paths`.' },
+        { label: 'Watches package.json and package-lock.json', test: function (h) { var p = h.evCfg('pull_request').paths; return h.listHas(p, 'package.json') && h.listHas(p, 'package-lock.json'); }, hint: 'Dependency changes can break tests too. Add both files to `paths`.' },
+        { label: 'Excludes Markdown in src', test: function (h) { return asList(h.evCfg('pull_request').paths).some(function (p) { return /^!.*\.md$/.test(String(p)); }); }, hint: 'Add a negative pattern after the positive ones: `"!src/**/*.md"`. Order matters: later patterns win.' },
+      ],
+      explain: '`paths` decides if the workflow runs at all, from the changed files. A pattern that starts with `!` removes matches, and the last matching pattern wins. Note: if this workflow is a required status check, a skipped run can block the merge, so required checks often use a job-level filter instead.',
+      docs: 'https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#onpushpull_requestpull_request_targetpathspaths-ignore' },
+
+    { id: 'fan-out', level: 2, topic: 'G2', title: 'Fan-out, then fan-in',
+      story: 'Lint, unit tests and E2E run at the same time. E2E is slow and expensive, and it runs even when lint already failed. Make E2E wait.',
+      tasks: ['Keep `lint` and `unit` in parallel.', 'Start `e2e` only after both `lint` and `unit` pass.'],
+      checks: [
+        { label: 'Jobs lint, unit and e2e exist', test: function (h) { return !!(h.job('lint') && h.job('unit') && h.job('e2e')); }, hint: 'Keep the three job IDs: `lint`, `unit`, `e2e`.' },
+        { label: 'e2e needs lint and unit', test: function (h) { var n = h.needs(h.job('e2e')); return n.indexOf('lint') !== -1 && n.indexOf('unit') !== -1; }, hint: 'Add `needs: [lint, unit]` to the `e2e` job.' },
+        { label: 'lint and unit still run in parallel', test: function (h) { return !h.needs(h.job('lint')).length && !h.needs(h.job('unit')).length; }, hint: 'Do not add `needs` to `lint` or `unit`.' },
+      ],
+      explain: 'Jobs run in parallel unless `needs` connects them. `needs` also means "only if those jobs succeed", so a lint failure skips E2E. This saves the most expensive minutes. Use `if: always()` on a job only when it must run after a failure, for example a report job.',
+      docs: 'https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#jobsjob_idneeds' },
+
+    { id: 'matrix', level: 2, topic: 'G2', title: 'Test many versions with a matrix',
+      story: 'The SDK must work on Node.js 18, 20 and 22, on Linux and Windows. Today the job tests only Node.js 20 on Linux. One failing combination must not cancel the others.',
+      tasks: ['Add a matrix with `os` (ubuntu-latest, windows-latest) and `node` (18, 20, 22).', 'Use the matrix values in `runs-on` and `node-version`.', 'Turn off fail-fast.'],
+      checks: [
+        { label: 'Matrix has the two operating systems', test: function (h) { var m = ((h.job('test') || {}).strategy || {}).matrix || {}; return Object.keys(m).some(function (k) { return h.listHas(m[k], 'ubuntu-latest') && h.listHas(m[k], 'windows-latest'); }); }, hint: 'Add `os: [ubuntu-latest, windows-latest]` under `strategy.matrix`.' },
+        { label: 'Matrix has Node 18, 20 and 22', test: function (h) { var m = ((h.job('test') || {}).strategy || {}).matrix || {}; return Object.keys(m).some(function (k) { return [18, 20, 22].every(function (v) { return h.listHas(m[k], v); }); }); }, hint: 'Add `node: [18, 20, 22]` under `strategy.matrix`.' },
+        { label: 'runs-on uses the matrix', test: function (h) { return /matrix\./.test(h.str((h.job('test') || {})['runs-on'])); }, hint: 'Set `runs-on: ${{ matrix.os }}`.' },
+        { label: 'node-version uses the matrix', test: function (h) { return !!h.findStep(function (s) { return h.uses(s, 'actions/setup-node') && isObj(s.with) && /matrix\./.test(h.str(s.with['node-version'])); }); }, hint: 'Set `node-version: ${{ matrix.node }}`.' },
+        { label: 'fail-fast is off', test: function (h) { return ((h.job('test') || {}).strategy || {})['fail-fast'] === false; }, hint: 'Add `fail-fast: false` under `strategy`. By default, one failure cancels all other combinations.' },
+      ],
+      explain: 'A matrix makes one job copy for each combination: 2 × 3 = 6 jobs. `fail-fast: false` lets every combination finish, so you see all failures in one run. Use `include` to add one special combination and `exclude` to remove one.',
+      docs: 'https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/running-variations-of-jobs-in-a-workflow' },
+
+    { id: 'cache', level: 2, topic: 'G2', title: 'Cache dependencies and browsers',
+      story: 'Every run downloads all npm packages and the Playwright browsers again. Installation takes 4 minutes of a 9-minute run.',
+      tasks: ['Cache npm downloads with `setup-node`.', 'Cache `~/.cache/ms-playwright` with `actions/cache`. The key must change when the lock file changes.'],
+      checks: [
+        { label: 'npm cache is on', test: function (h) { return !!h.findStep(function (s) { return (h.uses(s, 'actions/setup-node') && isObj(s.with) && s.with.cache === 'npm') || (h.uses(s, 'actions/cache') && isObj(s.with) && /\.npm/.test(h.str(s.with.path))); }); }, hint: 'Add `cache: npm` under the `with:` of `actions/setup-node`.' },
+        { label: 'Playwright browsers are cached', test: function (h) { return !!h.findStep(function (s) { return h.uses(s, 'actions/cache', 4) && isObj(s.with) && /ms-playwright/.test(h.str(s.with.path)); }); }, hint: 'Add `actions/cache@v4` with `path: ~/.cache/ms-playwright`.' },
+        { label: 'The cache key uses hashFiles of the lock file', test: function (h) { return !!h.findStep(function (s) { return h.uses(s, 'actions/cache') && isObj(s.with) && /hashFiles\(\s*'[^']*package-lock\.json'\s*\)/.test(h.str(s.with.key)); }); }, hint: 'Use `key: playwright-${{ runner.os }}-${{ hashFiles(\'**/package-lock.json\') }}`. A new lock file gives a new key.' },
+        { label: 'Cache step comes before npm ci', test: function (h) { var st = h.steps(h.job('test')), c = -1, n = -1; st.forEach(function (s, i) { if (h.uses(s, 'actions/cache') && c < 0) c = i; if (/npm ci/.test(h.str(s.run)) && n < 0) n = i; }); return c >= 0 && n >= 0 && c < n; }, hint: 'A cache restores files only for the steps after it. Put the cache step before `npm ci`.' },
+      ],
+      explain: 'A cache key is an exact name. When the key matches, the cache restores. When the lock file changes, `hashFiles` makes a new key, so stale packages never come back. The runner OS is in the key because Linux and Windows binaries differ. Caches are scoped to the branch, with a fallback to the default branch.',
+      docs: 'https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/caching-dependencies-to-speed-up-workflows' },
+
+    { id: 'artifacts', level: 2, topic: 'G6', title: 'Build once, pass the files',
+      story: 'The deploy job fails. It uses old artifact actions and it starts at the same time as the build. Fix it so that deploy uses the exact files that build made.',
+      tasks: ['Upload `dist` with `upload-artifact` v4 and name it `dist`.', 'Make `deploy` wait for `build`.', 'Download `dist` with `download-artifact` v4.'],
+      checks: [
+        { label: 'Upload uses v4 with name dist', test: function (h) { return !!h.findStep(function (s) { return h.uses(s, 'actions/upload-artifact', 4) && isObj(s.with) && s.with.name === 'dist'; }); }, hint: 'Use `actions/upload-artifact@v4` and add `name: dist`. v3 stopped working in January 2025.' },
+        { label: 'deploy needs build', test: function (h) { return h.needs(h.job('deploy')).indexOf('build') !== -1; }, hint: 'Add `needs: build` to `deploy`. Without it, deploy starts before the artifact exists.' },
+        { label: 'Download uses v4 with the same name', test: function (h) { return !!h.findStep(function (s, x) { return x.jid === 'deploy' && h.uses(s, 'actions/download-artifact', 4) && isObj(s.with) && s.with.name === 'dist'; }); }, hint: 'In `deploy`, use `actions/download-artifact@v4` with `name: dist`.' },
+      ],
+      explain: 'Each job runs on a new, empty runner, so files do not carry over. An artifact moves files from one job to another job in the same run. In v4, artifacts are immutable and names must be unique in the run. Deploy the files that the build job made; do not build again in the deploy job.',
+      docs: 'https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/storing-and-sharing-data-from-a-workflow' },
+
+    { id: 'outputs', level: 2, topic: 'G6', title: 'Pass a value between steps and jobs',
+      story: 'The build job reads the version from `package.json`. The release job needs that version. The current file uses a deprecated command, and the release job cannot see the value.',
+      tasks: ['Give the version step an `id` and write the value to `$GITHUB_OUTPUT`.', 'Expose it as a job output `version`.', 'Make `release` need `build` and read the output.'],
+      checks: [
+        { label: 'No deprecated `::set-output`', test: function (h) { return !/::set-output/.test(h.text); }, hint: 'Use `echo "version=..." >> "$GITHUB_OUTPUT"` instead.' },
+        { label: 'A step with an id writes to $GITHUB_OUTPUT', test: function (h) { return !!h.findStep(function (s) { return s.id && /GITHUB_OUTPUT/.test(h.str(s.run)); }); }, hint: 'Add `id: ver` to the step, and write `echo "version=$(...)" >> "$GITHUB_OUTPUT"`.' },
+        { label: 'build has a job output from that step', test: function (h) { var o = (h.job('build') || {}).outputs; return isObj(o) && Object.keys(o).some(function (k) { return /steps\.[\w-]+\.outputs\./.test(h.str(o[k])); }); }, hint: 'Add `outputs:` to the build job: `version: ${{ steps.ver.outputs.version }}`.' },
+        { label: 'release needs build and reads the output', test: function (h) { var r = h.job('release'); return !!r && h.needs(r).indexOf('build') !== -1 && /needs\.build\.outputs\./.test(h.allText(r)); }, hint: 'Add `needs: build`, then use `${{ needs.build.outputs.version }}`.' },
+      ],
+      explain: 'A step output lives in `$GITHUB_OUTPUT` and other steps in the same job read it as `steps.<id>.outputs.<name>`. To cross a job boundary, the job must map it in `outputs:`, and the next job reads it through `needs.<job>.outputs.<name>`. Outputs are strings, and secrets in outputs are masked or dropped.',
+      docs: 'https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/passing-information-between-jobs' },
+
+    { id: 'conditions', level: 2, topic: 'L4', title: 'Run steps and jobs only when needed',
+      story: 'The pipeline deploys from every branch and from pull requests. Log collection runs even when tests pass, and test data cleanup does not run when tests fail.',
+      tasks: ['Run `deploy` only for a push to `main`.', 'Run the log collection step only when an earlier step failed.', 'Run the cleanup step always, even after a failure.'],
+      checks: [
+        { label: 'deploy runs only for a push to main', test: function (h) { var c = h.str((h.job('deploy') || {}).if); return /refs\/heads\/main/.test(c) && /event_name\s*==\s*'push'/.test(c); }, hint: 'Add `if: github.event_name == \'push\' && github.ref == \'refs/heads/main\'` to the deploy job.' },
+        { label: 'Log collection runs only on failure', test: function (h) { return !!h.findStep(function (s) { return /collect-logs/.test(h.str(s.run)) && /failure\(\)/.test(h.str(s.if)); }); }, hint: 'Add `if: failure()` to the log step.' },
+        { label: 'Cleanup always runs', test: function (h) { return !!h.findStep(function (s) { return /cleanup/.test(h.str(s.run)) && /always\(\)|!\s*cancelled\(\)/.test(h.str(s.if)); }); }, hint: 'Add `if: always()` to the cleanup step. Without a status function, a step runs only if all earlier steps passed.' },
+      ],
+      explain: 'Every `if:` has an invisible `success() &&` in front, unless you use a status function. `failure()` runs after an earlier failure. `always()` runs every time, even after cancel; `!cancelled()` skips a cancelled run. `github.ref` for a push to main is `refs/heads/main`, not `main`.',
+      docs: 'https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/evaluate-expressions-in-workflows-and-actions#status-check-functions' },
+
+    { id: 'reusable-define', level: 3, topic: 'G1', title: 'Write a reusable workflow',
+      story: 'You own the shared E2E workflow for 300 repositories. Turn this file into a reusable workflow. Teams must choose the Node.js version and the test command. The workflow needs a private npm token from the caller.',
+      tasks: ['Trigger with `workflow_call`.', 'Add inputs `node-version` (string, default "20") and `test-command` (string, default `npm test`).', 'Require a secret `NPM_TOKEN` and use it for `npm ci`.', 'Use both inputs in the steps.'],
+      checks: [
+        { label: 'Triggered by workflow_call', test: function (h) { return h.has('workflow_call'); }, hint: 'Replace `pull_request:` with `workflow_call:`.' },
+        { label: 'Input node-version: string with a default', test: function (h) { var i = (h.evCfg('workflow_call').inputs || {})['node-version'] || {}; return i.type === 'string' && i.default !== undefined; }, hint: 'Add `node-version:` with `type: string` and `default: "20"`.' },
+        { label: 'Input test-command: string with a default', test: function (h) { var i = (h.evCfg('workflow_call').inputs || {})['test-command'] || {}; return i.type === 'string' && i.default !== undefined; }, hint: 'Add `test-command:` with `type: string` and `default: npm test`.' },
+        { label: 'Secret NPM_TOKEN is required', test: function (h) { var s = (h.evCfg('workflow_call').secrets || {}).NPM_TOKEN; return isObj(s) && s.required === true; }, hint: 'Under `workflow_call:`, add `secrets:` then `NPM_TOKEN:` with `required: true`.' },
+        { label: 'Steps use both inputs and the secret', test: function (h) { var t = h.allText(h.doc.jobs); return /inputs\.node-version/.test(t) && /inputs\.test-command/.test(t) && /secrets\.NPM_TOKEN/.test(t); }, hint: 'Use `${{ inputs.node-version }}` in setup-node, `${{ inputs.test-command }}` in a run step, and pass `${{ secrets.NPM_TOKEN }}` as `NODE_AUTH_TOKEN`.' },
+      ],
+      explain: 'A reusable workflow is an API for other repositories. Inputs need a `type`, and defaults keep callers short. Secrets must be declared, so callers know what to pass; `secrets: inherit` also works inside one organization. Release it with tags such as `v3`, and treat a renamed input as a breaking change.',
+      docs: 'https://docs.github.com/en/actions/sharing-automations/reusing-workflows' },
+
+    { id: 'reusable-call', level: 3, topic: 'G1', title: 'Call the shared workflow',
+      story: 'This repository has its own copy of the E2E workflow. The platform team now publishes `acme/platform-workflows/.github/workflows/e2e.yml` at tag `v3`. Replace the copy with a call. This repository needs Node.js 22.',
+      tasks: ['Replace the steps with one job that calls the shared workflow at `v3`.', 'Pass `node-version: "22"`.', 'Pass the secrets.'],
+      checks: [
+        { label: 'Calls the shared workflow at v3', test: function (h) { return h.jobList().some(function (j) { return /^acme\/platform-workflows\/\.github\/workflows\/e2e\.ya?ml@v3/.test(h.str(j.job.uses)); }); }, hint: 'Set `uses: acme/platform-workflows/.github/workflows/e2e.yml@v3` on the job.' },
+        { label: 'Passes node-version 22', test: function (h) { return h.jobList().some(function (j) { return j.job.uses && isObj(j.job.with) && /^22/.test(h.str(j.job.with['node-version'])); }); }, hint: 'Add `with:` then `node-version: "22"`.' },
+        { label: 'Passes secrets', test: function (h) { return h.jobList().some(function (j) { return j.job.uses && (j.job.secrets === 'inherit' || (isObj(j.job.secrets) && 'NPM_TOKEN' in j.job.secrets)); }); }, hint: 'Add `secrets: inherit`, or pass `NPM_TOKEN: ${{ secrets.NPM_TOKEN }}`.' },
+        { label: 'The calling job has no runs-on or steps', test: function (h) { return h.jobList().every(function (j) { return !j.job.uses || (!j.job.steps && !j.job['runs-on']); }); }, hint: 'Remove `runs-on` and `steps`. The called workflow defines them.' },
+      ],
+      explain: 'The caller becomes a few lines, so a security fix in the shared workflow reaches every repository at the next release. Pin to a major tag for convenience, or to a commit SHA for strict control. An organization ruleset can also require this workflow to pass before merge.',
+      docs: 'https://docs.github.com/en/actions/sharing-automations/reusing-workflows#calling-a-reusable-workflow' },
+
+    { id: 'concurrency', level: 3, topic: 'G2', title: 'Cancel outdated runs',
+      story: 'Developers push 5 commits in 10 minutes. Each push starts a full run, and the queue grows. Cancel the old run when a new commit arrives on the same branch, but never cancel runs on `main`.',
+      tasks: ['Add a top-level `concurrency` group per workflow and branch.', 'Cancel in-progress runs, except on `main`.'],
+      checks: [
+        { label: 'A concurrency group exists', test: function (h) { return isObj(h.doc.concurrency) && !!h.doc.concurrency.group; }, hint: 'Add `concurrency:` with `group:` at the top level.' },
+        { label: 'Group includes the workflow and the ref', test: function (h) { var g = h.str((h.doc.concurrency || {}).group); return /github\.workflow/.test(g) && /github\.(ref|head_ref)|pull_request\.number/.test(g); }, hint: 'Use `group: ${{ github.workflow }}-${{ github.ref }}`. Without the workflow name, two workflows can cancel each other.' },
+        { label: 'Cancels in-progress runs', test: function (h) { var c = (h.doc.concurrency || {})['cancel-in-progress']; return c === true || /\$\{\{/.test(h.str(c)); }, hint: 'Add `cancel-in-progress: true` or an expression.' },
+        { label: 'Never cancels runs on main', test: function (h) { return /refs\/heads\/main/.test(h.str((h.doc.concurrency || {})['cancel-in-progress'])); }, hint: 'Use `cancel-in-progress: ${{ github.ref != \'refs/heads/main\' }}`.' },
+      ],
+      explain: 'Runs with the same group key run one at a time. `cancel-in-progress` stops the older run, which saves runner minutes on busy branches. On `main`, every commit must finish so the history of results stays complete, so the expression turns cancel off there.',
+      docs: 'https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/control-the-concurrency-of-workflows-and-jobs' },
+
+    { id: 'sharding', level: 3, topic: 'G2', title: 'Shard Playwright across 4 machines',
+      story: 'The E2E job takes 40 minutes on one runner. Split it into 4 shards that run in parallel, then merge the results into one HTML report.',
+      tasks: ['Add a matrix `shard: [1, 2, 3, 4]` with fail-fast off.', 'Run `npx playwright test --shard=<n>/4` with the blob reporter.', 'Upload each blob report with a unique name.', 'Add a `merge-reports` job that runs after all shards, also after failures, and merges the reports.'],
+      checks: [
+        { label: 'Matrix has 4 shards, fail-fast off', test: function (h) { var s = (h.job('e2e') || {}).strategy || {}; var m = s.matrix || {}; return s['fail-fast'] === false && Object.keys(m).some(function (k) { return asList(m[k]).length === 4; }); }, hint: 'Add `strategy:` with `fail-fast: false` and `matrix: shard: [1, 2, 3, 4]`.' },
+        { label: 'Runs one shard per job', test: function (h) { return /--shard[= ]\$\{\{\s*matrix\.[\w-]+\s*\}\}\/4/.test(h.runs(h.job('e2e'))); }, hint: 'Run `npx playwright test --shard=${{ matrix.shard }}/4 --reporter=blob`.' },
+        { label: 'Each shard uploads a uniquely named report', test: function (h) { return !!h.findStep(function (s, x) { return x.jid === 'e2e' && h.uses(s, 'actions/upload-artifact', 4) && isObj(s.with) && /matrix\./.test(h.str(s.with.name)); }); }, hint: 'Use `name: blob-report-${{ matrix.shard }}`. In v4, two uploads with the same name fail.' },
+        { label: 'merge-reports needs e2e and runs after failures', test: function (h) { var m = h.job('merge-reports'); return !!m && h.needs(m).indexOf('e2e') !== -1 && /always\(\)|!\s*cancelled\(\)/.test(h.str(m.if)); }, hint: 'Add a `merge-reports` job with `needs: e2e` and `if: ${{ !cancelled() }}`. Without it, a failed shard skips the report.' },
+        { label: 'Downloads all shards and merges them', test: function (h) { var m = h.job('merge-reports'); return !!m && /merge-reports/.test(h.runs(m)) && h.steps(m).some(function (s) { return h.uses(s, 'actions/download-artifact', 4) && isObj(s.with) && (s.with.pattern || s.with['merge-multiple']); }); }, hint: 'Use `actions/download-artifact@v4` with `pattern: blob-report-*` and `merge-multiple: true`, then `npx playwright merge-reports --reporter html ./all-blob-reports`.' },
+      ],
+      explain: 'Sharding splits tests across machines; with `fullyParallel: true` in the config, Playwright splits by test, so shards are balanced. Each shard writes a blob report. The merge job collects them and builds one HTML report, even when a shard failed. 4 shards cut wall time about 4×, but they cost 4 runners.',
+      docs: 'https://playwright.dev/docs/test-sharding' },
+
+    { id: 'oidc', level: 3, topic: 'G3', title: 'Deploy to AWS without stored keys',
+      story: 'This workflow uses long-lived AWS access keys stored as GitHub secrets. Security wants them deleted. The IAM role `arn:aws:iam::123456789012:role/gha-results-uploader` already trusts GitHub OIDC for this repository.',
+      tasks: ['Let the job request an OIDC token.', 'Assume the role with `role-to-assume`.', 'Remove every use of the AWS key secrets.'],
+      checks: [
+        { label: 'id-token: write is set', test: function (h) { return h.perm(h.doc.permissions, 'id-token') === 'write' || h.jobList().some(function (j) { return h.perm(j.job.permissions, 'id-token') === 'write'; }); }, hint: 'Add `id-token: write` under `permissions:`. Without it, the job cannot request an OIDC token.' },
+        { label: 'contents: read is still set', test: function (h) { var p = h.doc.permissions; return h.perm(p, 'contents') === 'read' || h.jobList().every(function (j) { return h.perm(j.job.permissions, 'contents') === 'read'; }); }, hint: 'When you set any permission, all others become none. Keep `contents: read` so checkout works.' },
+        { label: 'Assumes the role with OIDC', test: function (h) { return !!h.findStep(function (s) { return h.uses(s, 'aws-actions/configure-aws-credentials', 4) && isObj(s.with) && /gha-results-uploader/.test(h.str(s.with['role-to-assume'])) && !!s.with['aws-region']; }); }, hint: 'Use `role-to-assume: arn:aws:iam::123456789012:role/gha-results-uploader` and keep `aws-region`.' },
+        { label: 'No AWS key secrets anywhere', test: function (h) { return !/AWS_ACCESS_KEY_ID|AWS_SECRET_ACCESS_KEY|aws-access-key-id|aws-secret-access-key/.test(h.text); }, hint: 'Delete `aws-access-key-id` and `aws-secret-access-key`. Then delete the secrets in GitHub and the IAM user keys.' },
+      ],
+      explain: 'With OIDC, GitHub gives the job a short-lived signed token. AWS STS checks the token against the role trust policy (repository, branch or environment in the `sub` claim) and returns credentials that expire in about an hour. No long-lived key exists, so none can leak.',
+      docs: 'https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services' },
+
+    { id: 'least-privilege', level: 3, topic: 'G3', title: 'Least-privilege GITHUB_TOKEN',
+      story: 'The workflow gives the token `write-all`. Only the `comment` job writes, and it writes only a pull request comment.',
+      tasks: ['Set the top-level permissions to read the code only.', 'Give `comment` the one write permission that it needs.'],
+      checks: [
+        { label: 'Top level is contents: read', test: function (h) { return isObj(h.doc.permissions) && h.doc.permissions.contents === 'read' && !Object.keys(h.doc.permissions).some(function (k) { return h.doc.permissions[k] === 'write'; }); }, hint: 'Replace `write-all` with `permissions:` then `contents: read`.' },
+        { label: 'comment has pull-requests: write', test: function (h) { var c = h.job('comment'); return !!c && h.perm(c.permissions, 'pull-requests') === 'write'; }, hint: 'Add `permissions: pull-requests: write` to the `comment` job. PR comments use the issues API, and `pull-requests: write` allows them on pull requests.' },
+        { label: 'test has no write permission', test: function (h) { var t = h.job('test'); return !!t && !(isObj(t.permissions) && Object.keys(t.permissions).some(function (k) { return t.permissions[k] === 'write'; })) && t.permissions !== 'write-all'; }, hint: 'Do not add write permissions to `test`.' },
+      ],
+      explain: 'The `GITHUB_TOKEN` is created for each run. If a step is compromised, it can do only what the token allows. A job-level `permissions` block replaces the top-level block for that job, so give the write scope only where it is needed.',
+      docs: 'https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token' },
+
+    { id: 'fork-safe', level: 3, topic: 'G3', title: 'Fix the fork pull request leak',
+      story: 'A contributor opened a pull request from a fork. Their test script printed `TEST_API_TOKEN` to the log. This workflow ran their code with secrets and a write token. Fix it.',
+      tasks: ['Use a trigger that runs fork code without secrets.', 'Check out the code normally.', 'Remove the secret from the test step.', 'Read-only token.'],
+      checks: [
+        { label: 'No pull_request_target', test: function (h) { return !h.has('pull_request_target'); }, hint: 'Use `pull_request`. For fork PRs, it gives no secrets and a read-only token.' },
+        { label: 'Runs on pull_request', test: function (h) { return h.has('pull_request'); }, hint: 'Add `pull_request:` under `on:`.' },
+        { label: 'No checkout of the PR head by hand', test: function (h) { return !/pull_request\.head\.(sha|ref)|head_ref/.test(h.allText(h.doc.jobs)); }, hint: 'Remove `ref: ${{ github.event.pull_request.head.sha }}`. With `pull_request`, checkout already gets the merge commit.' },
+        { label: 'No secrets in the test job', test: function (h) { return !/secrets\./.test(h.allText(h.doc.jobs)); }, hint: 'Remove `TEST_API_TOKEN`. Tests for untrusted code must not need secrets. Use mocks, or run secret tests after merge.' },
+        { label: 'Token is read-only', test: function (h) { var p = h.doc.permissions; return isObj(p) && !Object.keys(p).some(function (k) { return p[k] === 'write'; }); }, hint: 'Set `permissions: contents: read`.' },
+      ],
+      explain: '`pull_request_target` runs in the base repository context, with secrets and a write token. That is safe only when you never run code from the PR. `pull_request` runs fork code with no secrets and a read-only token. Rotate the leaked token first; then fix the workflow.',
+      docs: 'https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/' },
+
+    { id: 'injection', level: 3, topic: 'G3', title: 'Stop script injection',
+      story: 'This step prints the PR title and branch. An attacker can name a branch `a";curl evil.sh|sh;"` and run commands on the runner. Keep the same output, but make it safe.',
+      tasks: ['Move the PR title and branch into `env:` variables.', 'Use the variables in the script with double quotes.'],
+      checks: [
+        { label: 'No user text inside run', test: function (h) { return !h.allSteps().some(function (x) { return /\$\{\{[^}]*(pull_request\.title|head_ref)[^}]*\}\}/.test(h.str(x.step.run)); }); }, hint: 'Remove `${{ github.event.pull_request.title }}` and `${{ github.head_ref }}` from `run:`.' },
+        { label: 'Values pass through env', test: function (h) { return !!h.findStep(function (s) { var e = h.allText(s.env); return /pull_request\.title/.test(e) && /head_ref/.test(e); }); }, hint: 'Add `env:` to the step: `PR_TITLE: ${{ github.event.pull_request.title }}` and `PR_BRANCH: ${{ github.head_ref }}`.' },
+        { label: 'Script uses the variables in quotes', test: function (h) { return !!h.findStep(function (s) { return isObj(s.env) && Object.keys(s.env).every(function (k) { return new RegExp('"[^"]*\\$\\{?' + k + '\\b').test(h.str(s.run)); }); }); }, hint: 'Write `echo "Title: $PR_TITLE"`. Double quotes stop the shell from splitting the value.' },
+      ],
+      explain: '`${{ }}` is replaced before the shell runs, so the value becomes part of the script text. An environment variable is data, not code: the shell does not execute its content. This applies to PR titles, bodies, branch names, commit messages and issue comments.',
+      docs: 'https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions#understanding-the-risk-of-script-injections' },
+
+    { id: 'private-runner', level: 3, topic: 'G4', title: 'Run on private runners in EKS',
+      story: 'The staging environment is in a private VPC. GitHub-hosted runners cannot reach it. The platform team runs an Actions Runner Controller scale set named `arc-e2e-private` inside the EKS cluster.',
+      tasks: ['Run the job on the `arc-e2e-private` scale set.', 'Use the `staging` environment, so its rules and secrets apply.', 'Stop a stuck run after 30 minutes.'],
+      checks: [
+        { label: 'Runs on arc-e2e-private', test: function (h) { return h.jobList().some(function (j) { return asList(j.job['runs-on']).map(String).indexOf('arc-e2e-private') !== -1; }); }, hint: 'Set `runs-on: arc-e2e-private`. For ARC scale sets, the name of the scale set is the label.' },
+        { label: 'Uses the staging environment', test: function (h) { return h.jobList().some(function (j) { var e = j.job.environment; return (isObj(e) ? e.name : e) === 'staging'; }); }, hint: 'Add `environment: staging` to the job.' },
+        { label: 'Has a 30-minute timeout', test: function (h) { return h.jobList().some(function (j) { return j.job['timeout-minutes'] === 30; }); }, hint: 'Add `timeout-minutes: 30`. The default is 360 minutes, which blocks a self-hosted runner for 6 hours.' },
+      ],
+      explain: 'ARC creates an ephemeral runner pod for each job, inside the VPC, and deletes it after the job. Ephemeral runners stop state and secrets from leaking between jobs. Environments add protection rules and environment-scoped secrets. A short timeout frees capacity when a test hangs.',
+      docs: 'https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/about-actions-runner-controller' },
+
+    { id: 'promote', level: 3, topic: 'G6', title: 'Promote, do not rebuild',
+      story: 'Staging and production each build their own `:latest` image. A bug in production did not exist in staging, because the two builds were different. Build one image, tag it with the commit SHA, and promote that same image.',
+      tasks: ['Add a `build` job that pushes one image tagged with `github.sha`.', 'Add `deploy-staging` (environment `staging`) after build.', 'Add `deploy-production` (environment `production`) after staging.', 'Deploy jobs must not build.'],
+      checks: [
+        { label: 'build pushes an image tagged with the SHA', test: function (h) { var b = h.job('build'); return !!b && /github\.sha/.test(h.allText(b)) && (h.steps(b).some(function (s) { return h.uses(s, 'docker/build-push-action'); }) || /docker (build|push)/.test(h.runs(b))); }, hint: 'Use `docker/build-push-action` with `push: true` and `tags: ...:${{ github.sha }}`.' },
+        { label: 'deploy-staging needs build, environment staging', test: function (h) { var j = h.job('deploy-staging'); return !!j && h.needs(j).indexOf('build') !== -1 && (isObj(j.environment) ? j.environment.name : j.environment) === 'staging'; }, hint: 'Add a `deploy-staging` job with `needs: build` and `environment: staging`.' },
+        { label: 'deploy-production needs staging, environment production', test: function (h) { var j = h.job('deploy-production'); return !!j && h.needs(j).indexOf('deploy-staging') !== -1 && (isObj(j.environment) ? j.environment.name : j.environment) === 'production'; }, hint: 'Add `deploy-production` with `needs: [build, deploy-staging]` and `environment: production`. Add required reviewers to that environment in the repository settings.' },
+        { label: 'Deploy jobs do not build or use :latest', test: function (h) { return ['deploy-staging', 'deploy-production'].every(function (id) { var j = h.job(id); return !!j && !/docker build|build-push-action|:latest/.test(h.allText(j)); }); }, hint: 'Remove `docker build` from the deploy jobs. They deploy the SHA tag from the build job.' },
+        { label: 'Both deploys use the same tag', test: function (h) { return ['deploy-staging', 'deploy-production'].every(function (id) { return /needs\.build\.outputs\.|github\.sha/.test(h.allText(h.job(id))); }); }, hint: 'Use `${{ needs.build.outputs.tag }}` or `${{ github.sha }}` in both deploy jobs.' },
+      ],
+      explain: 'One build, one immutable tag, promoted through environments: what you tested is what you ship. The SHA tag links the image to the exact commit. Rollback is a redeploy of the previous SHA. Environment protection on `production` adds an approval gate.',
+      docs: 'https://docs.github.com/en/actions/managing-workflow-runs-and-deployments/managing-deployments/managing-environments-for-deployment' },
+
+    { id: 'notify', level: 3, topic: 'G7', title: 'Tell the team when the night run fails',
+      story: 'Nobody reads the nightly run results. Post to the team Slack channel only when the tests fail, and write a short summary on the run page every night.',
+      tasks: ['Write a Markdown summary to `$GITHUB_STEP_SUMMARY`, also after failures.', 'Add a `notify` job that runs only when `tests` fails.', 'Post with `slackapi/slack-github-action@v2` and the `SLACK_WEBHOOK_URL` secret.'],
+      checks: [
+        { label: 'Writes a job summary, also after failure', test: function (h) { return !!h.findStep(function (s) { return /GITHUB_STEP_SUMMARY/.test(h.str(s.run)) && /always\(\)|!\s*cancelled\(\)|failure\(\)/.test(h.str(s.if)); }); }, hint: 'Add a step with `if: always()` that runs `echo "## Nightly E2E" >> "$GITHUB_STEP_SUMMARY"`.' },
+        { label: 'notify needs tests and runs on failure', test: function (h) { var n = h.job('notify'); return !!n && h.needs(n).indexOf('tests') !== -1 && /failure\(\)/.test(h.str(n.if)); }, hint: 'Add a `notify` job with `needs: tests` and `if: failure()`.' },
+        { label: 'Posts to Slack with the webhook secret', test: function (h) { var n = h.job('notify'); return !!n && /secrets\.SLACK_WEBHOOK_URL/.test(h.allText(n)) && (h.steps(n).some(function (s) { return h.uses(s, 'slackapi/slack-github-action', 2); }) || /curl/.test(h.runs(n))); }, hint: 'Use `slackapi/slack-github-action@v2` with `webhook: ${{ secrets.SLACK_WEBHOOK_URL }}` and `webhook-type: incoming-webhook`.' },
+        { label: 'The message links to the run', test: function (h) { return /github\.run_id/.test(h.allText(h.job('notify'))); }, hint: 'Add the run URL: `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`.' },
+      ],
+      explain: 'An incoming webhook posts to one fixed channel and is the simplest setup. A Slack app with a bot token can post to many channels and update messages, which suits a platform that serves many teams. Notify on failure (or on a state change) to avoid alert fatigue.',
+      docs: 'https://github.com/slackapi/slack-github-action' },
+
+    { id: 'dispatch', level: 3, topic: 'D7', title: 'React to an external event',
+      story: 'The deploy system (outside GitHub) finishes a deploy and must start the smoke tests. Today the smoke tests run on push and miss deploys. The deploy system will send a `repository_dispatch` event of type `deploy-finished`, with `environment` and `status` in the payload.',
+      tasks: ['Trigger on `repository_dispatch` of type `deploy-finished`, and allow a manual run.', 'Run only if the payload status is `success` (or the run is manual).', 'Test the environment from the payload.'],
+      checks: [
+        { label: 'Triggered by repository_dispatch deploy-finished', test: function (h) { return h.has('repository_dispatch') && h.listHas(h.evCfg('repository_dispatch').types, 'deploy-finished'); }, hint: 'Add `repository_dispatch:` with `types: [deploy-finished]`.' },
+        { label: 'Allows a manual run', test: function (h) { return h.has('workflow_dispatch'); }, hint: 'Add `workflow_dispatch:`.' },
+        { label: 'Checks the payload status', test: function (h) { return h.jobList().some(function (j) { return /client_payload\.status/.test(h.str(j.job.if)); }) || !!h.findStep(function (s) { return /client_payload\.status/.test(h.str(s.if)); }); }, hint: 'Add `if: github.event.client_payload.status == \'success\'` to the job.' },
+        { label: 'Uses the payload environment safely', test: function (h) { return !!h.findStep(function (s) { return /client_payload\.environment/.test(h.allText(s.env)); }); }, hint: 'Pass it through `env:`: `TARGET_ENV: ${{ github.event.client_payload.environment }}`. The payload comes from outside, so do not put it in `run:` directly.' },
+      ],
+      explain: 'A webhook or API call is better than polling: the deploy system pushes the event when it is done. `repository_dispatch` needs a token with write access to the repository, and only the default branch workflow runs. Treat `client_payload` as untrusted input.',
+      docs: 'https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#repository_dispatch' },
+  ];
+
+  function runChecks(sc, doc, text) {
+    var h = H(doc, text);
+    return sc.checks.map(function (c) {
+      var ok = false;
+      try { ok = !!c.test(h); } catch (e) { ok = false; }
+      return { label: c.label, ok: ok, hint: c.hint };
+    });
+  }
+
+  var api = { SCENARIOS: S, LEVELS: LEVELS, runChecks: runChecks };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api; else global.WBScenarios = api;
+})(this);
+
+(function () {
+  'use strict';
+  var S = window.WBScenarios.SCENARIOS, LEVELS = window.WBScenarios.LEVELS, BANK = window.WB_YAML;
+  var Lint = window.WBLint, Ex = window.WBExplain, Y = window.jsyaml;
+  var KEY = 'actions-workbench-v1';
+  var store = { solved: {}, drafts: {}, last: null };
+  try { var raw = localStorage.getItem(KEY); if (raw) store = Object.assign(store, JSON.parse(raw)); } catch (e) {}
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
+
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function md(s) { return esc(s).replace(/`([^`]+)`/g, '<code>$1</code>'); }
+
+  var cur = null, checked = false, lastResult = null, hintsShown = 0, answerShown = false;
+
+  // ---------- scenario picker ----------
+  var pick = $('pick');
+  pick.innerHTML = LEVELS.map(function (lv) {
+    return '<optgroup label="Level ' + lv.id + ': ' + esc(lv.name) + '">' + S.filter(function (s) { return s.level === lv.id; }).map(function (s) {
+      var n = S.indexOf(s) + 1;
+      return '<option value="' + s.id + '">' + n + '. ' + esc(s.title) + '</option>';
+    }).join('') + '</optgroup>';
+  }).join('');
+
+  // ---------- editor ----------
+  var lintCache = [];
+  CodeMirror.registerHelper('lint', 'yaml', function () {
+    return lintCache.map(function (p) {
+      var line = Math.min(p.line, cm.lineCount() - 1);
+      return { from: CodeMirror.Pos(line, 0), to: CodeMirror.Pos(line, cm.getLine(line).length), message: p.msg.replace(/`/g, '') + (p.why ? '\n' + p.why.replace(/`/g, '') : ''), severity: p.sev === 'info' ? 'info' : p.sev };
+    });
+  });
+  var cm = CodeMirror($('editor'), {
+    mode: 'yaml', lineNumbers: true, tabSize: 2, indentUnit: 2, indentWithTabs: false, smartIndent: true,
+    styleActiveLine: true, lineWrapping: false, viewportMargin: Infinity, autoCloseBrackets: true,
+    gutters: ['CodeMirror-lint-markers', 'CodeMirror-linenumbers'], lint: { delay: 250 },
+    extraKeys: {
+      Tab: function (c) { if (c.somethingSelected()) c.indentSelection('add'); else c.replaceSelection('  ', 'end'); },
+      'Shift-Tab': function (c) { c.indentSelection('subtract'); },
+      'Cmd-Enter': function () { runCheck(true); }, 'Ctrl-Enter': function () { runCheck(true); },
+      'Cmd-/': 'toggleComment', 'Ctrl-/': 'toggleComment',
+    },
+  });
+
+  // ---------- analysis ----------
+  var timer;
+  function analyse() {
+    var text = cm.getValue();
+    var r = Lint.lintWorkflow(text, Y);
+    lintCache = r.problems;
+    renderProblems(r.problems);
+    renderExplain(r.doc);
+    if (checked) renderChecks(r);
+    if (cur) { store.drafts[cur.id] = text; save(); }
+    lastResult = r;
+    return r;
+  }
+  cm.on('change', function () { clearTimeout(timer); timer = setTimeout(analyse, 220); });
+
+  function counts(ps) {
+    var c = { error: 0, warning: 0, info: 0 }; ps.forEach(function (p) { c[p.sev]++; }); return c;
+  }
+  function renderProblems(ps) {
+    var c = counts(ps);
+    $('status').innerHTML =
+      '<span class="pill ' + (c.error ? 'err' : 'ok') + '">' + c.error + ' error' + (c.error === 1 ? '' : 's') + '</span>' +
+      '<span class="pill ' + (c.warning ? 'warn' : 'mute') + '">' + c.warning + ' warning' + (c.warning === 1 ? '' : 's') + '</span>' +
+      '<span class="pill mute">' + c.info + ' note' + (c.info === 1 ? '' : 's') + '</span>';
+    $('tab-problems').querySelector('.badge').textContent = c.error + c.warning || '';
+    $('tab-problems').querySelector('.badge').className = 'badge' + (c.error ? ' err' : c.warning ? ' warn' : '');
+    if (!ps.length) { $('problems').innerHTML = '<p class="empty">No problems found. The workflow is valid YAML and uses known keys.</p>'; return; }
+    $('problems').innerHTML = '<ul class="plist">' + ps.map(function (p, i) {
+      return '<li class="sev-' + p.sev + '"><button type="button" class="pjump" data-line="' + p.line + '">' +
+        '<span class="sev">' + (p.sev === 'error' ? 'Error' : p.sev === 'warning' ? 'Warning' : 'Note') + '</span><span class="ln">Line ' + (p.line + 1) + '</span></button>' +
+        '<p class="pmsg">' + md(p.msg) + '</p>' + (p.why ? '<p class="pwhy">' + md(p.why) + '</p>' : '') + '</li>';
+    }).join('') + '</ul>';
+  }
+  $('problems').addEventListener('click', function (e) {
+    var b = e.target.closest('.pjump'); if (!b) return;
+    var ln = +b.dataset.line; cm.focus(); cm.setCursor({ line: ln, ch: cm.getLine(ln) ? cm.getLine(ln).length : 0 });
+    cm.scrollIntoView({ line: ln, ch: 0 }, 80);
+    $('editor').scrollIntoView({ block: 'nearest' });
+  });
+
+  function renderExplain(doc) {
+    var secs = doc ? Ex.explainWorkflow(doc) : [];
+    if (!secs.length) { $('explain').innerHTML = '<p class="empty">Write valid YAML to see what the workflow does. The explanation updates as you type.</p>'; return; }
+    $('explain').innerHTML = secs.map(function (s) {
+      return '<section class="xsec' + (s.job ? ' xjob' : '') + '"><h4>' + esc(s.h) + '</h4><ul>' + s.items.map(function (i) { return '<li>' + i + '</li>'; }).join('') + '</ul></section>';
+    }).join('');
+  }
+
+  function renderChecks(r) {
+    var box = $('checks');
+    if (!r.doc || r.problems.some(function (p) { return p.sev === 'error' && /^YAML syntax/.test(p.msg); })) {
+      box.innerHTML = '<p class="empty">Fix the YAML syntax error first. Then the requirements can be checked.</p>'; return [];
+    }
+    var res = window.WBScenarios.runChecks(cur, r.doc, cm.getValue());
+    var pass = res.filter(function (c) { return c.ok; }).length, errs = counts(r.problems).error;
+    box.innerHTML = '<p class="score"><strong>' + pass + ' of ' + res.length + '</strong> requirements met' + (errs ? ' · ' + errs + ' error' + (errs > 1 ? 's' : '') + ' to fix' : '') + '</p>' +
+      '<ol class="clist">' + res.map(function (c, i) {
+        var showHint = !c.ok && i < 99 && hintIdx(res).indexOf(i) !== -1;
+        return '<li class="' + (c.ok ? 'pass' : 'fail') + '"><span class="mark" aria-hidden="true">' + (c.ok ? '✓' : '✗') + '</span><span class="sr">' + (c.ok ? 'Met: ' : 'Not met: ') + '</span>' +
+          '<span class="clabel">' + md(c.label) + '</span>' + (showHint ? '<p class="chint">' + md(c.hint) + '</p>' : '') + '</li>';
+      }).join('') + '</ol>';
+    $('tab-checks').querySelector('.badge').textContent = pass + '/' + res.length;
+    $('tab-checks').querySelector('.badge').className = 'badge' + (pass === res.length ? ' ok' : '');
+    var solved = pass === res.length && !errs;
+    if (solved && !store.solved[cur.id]) { store.solved[cur.id] = true; save(); renderProgress(); toast('Solved: ' + cur.title + '.', true); }
+    $('solved').hidden = !(solved || store.solved[cur.id]);
+    return res;
+  }
+  function hintIdx(res) {
+    var fails = []; res.forEach(function (c, i) { if (!c.ok) fails.push(i); });
+    return fails.slice(0, hintsShown);
+  }
+
+  function runCheck(focusTab) {
+    checked = true;
+    var r = analyse();
+    if (focusTab) showTab('checks');
+    return r;
+  }
+
+  // ---------- scenario load ----------
+  function load(id, keepDraft) {
+    var sc = S.filter(function (s) { return s.id === id; })[0] || S[0];
+    cur = sc; checked = false; hintsShown = 0; answerShown = false;
+    pick.value = sc.id;
+    var n = S.indexOf(sc) + 1, lv = LEVELS.filter(function (l) { return l.id === sc.level; })[0];
+    $('sc-meta').innerHTML = '<span class="chip lv' + sc.level + '">Level ' + sc.level + ' · ' + esc(lv.name) + '</span><span class="chip">' + esc(sc.topic) + '</span><span class="chip mono">' + n + ' / ' + S.length + '</span>';
+    $('sc-title').textContent = sc.title;
+    $('sc-story').innerHTML = md(sc.story);
+    $('sc-tasks').innerHTML = sc.tasks.map(function (t) { return '<li>' + md(t) + '</li>'; }).join('');
+    $('sc-docs').href = sc.docs;
+    var draft = keepDraft !== false && store.drafts[sc.id];
+    cm.setValue(draft || BANK[sc.id].starter);
+    cm.clearHistory();
+    $('checks').innerHTML = '<p class="empty">Press <strong>Check answer</strong> (or Ctrl/Cmd + Enter) to test your workflow against the ' + sc.checks.length + ' requirements of this scenario.</p>';
+    $('tab-checks').querySelector('.badge').textContent = sc.checks.length ? '0/' + sc.checks.length : '';
+    $('tab-checks').querySelector('.badge').className = 'badge';
+    $('answer').innerHTML = '<p class="empty">Try the hints first. When you open the model answer, compare it with yours line by line.</p><button type="button" class="btn ghost" id="reveal">Show the model answer</button>';
+    $('solved').hidden = !store.solved[sc.id];
+    store.last = sc.id; save();
+    try { history.replaceState(null, '', '#' + sc.id); } catch (e) {}
+    analyse();
+    $('prev').disabled = n === 1; $('next').disabled = n === S.length;
+  }
+
+  function renderProgress() {
+    var n = S.filter(function (s) { return store.solved[s.id]; }).length;
+    $('progress').textContent = n + ' / ' + S.length + ' solved';
+    Array.prototype.forEach.call(pick.options, function (o) {
+      var s = S.filter(function (x) { return x.id === o.value; })[0];
+      o.textContent = (S.indexOf(s) + 1) + '. ' + s.title + (store.solved[s.id] ? '  ✓' : '');
+    });
+  }
+
+  function showAnswer() {
+    answerShown = true;
+    var sol = BANK[cur.id].solution;
+    $('answer').innerHTML = '<p class="xplain">' + md(cur.explain) + '</p>' +
+      '<div class="ansbar"><button type="button" class="btn" id="load-answer">Load into the editor</button><span class="note">Your draft is replaced. Use Undo (Ctrl/Cmd + Z) to get it back.</span></div>' +
+      '<pre class="anscode"><code>' + esc(sol) + '</code></pre>';
+  }
+
+  // ---------- tabs ----------
+  function showTab(name) {
+    ['problems', 'checks', 'explain', 'answer'].forEach(function (t) {
+      var on = t === name;
+      $('tab-' + t).setAttribute('aria-selected', on ? 'true' : 'false');
+      $('tab-' + t).tabIndex = on ? 0 : -1;
+      $('panel-' + t).hidden = !on;
+    });
+    try { sessionStorage.setItem(KEY + '-tab', name); } catch (e) {}
+  }
+  $('tabs').addEventListener('click', function (e) { var t = e.target.closest('[role=tab]'); if (t) showTab(t.dataset.tab); });
+  $('tabs').addEventListener('keydown', function (e) {
+    var order = ['problems', 'checks', 'explain', 'answer'], curT = order.filter(function (t) { return $('tab-' + t).getAttribute('aria-selected') === 'true'; })[0];
+    var i = order.indexOf(curT);
+    if (e.key === 'ArrowRight') { i = (i + 1) % 4; showTab(order[i]); $('tab-' + order[i]).focus(); }
+    if (e.key === 'ArrowLeft') { i = (i + 3) % 4; showTab(order[i]); $('tab-' + order[i]).focus(); }
+  });
+
+  // ---------- toast ----------
+  var tt;
+  function toast(msg, withNext) {
+    var t = $('toast');
+    t.innerHTML = '<span>' + esc(msg) + '</span>' + (withNext && S.indexOf(cur) < S.length - 1 ? '<button type="button" class="btn small" id="toast-next">Next scenario →</button>' : '');
+    t.hidden = false; clearTimeout(tt); tt = setTimeout(function () { t.hidden = true; }, 6000);
+  }
+
+  // ---------- controls ----------
+  pick.addEventListener('change', function () { load(pick.value); });
+  $('prev').addEventListener('click', function () { var i = S.indexOf(cur); if (i > 0) load(S[i - 1].id); });
+  $('next').addEventListener('click', function () { var i = S.indexOf(cur); if (i < S.length - 1) load(S[i + 1].id); });
+  $('random').addEventListener('click', function () {
+    var pool = S.filter(function (s) { return !store.solved[s.id] && s !== cur; });
+    if (!pool.length) pool = S.filter(function (s) { return s !== cur; });
+    load(pool[Math.floor(Math.random() * pool.length)].id);
+  });
+  $('check').addEventListener('click', function () { runCheck(true); });
+  $('hint').addEventListener('click', function () {
+    if (!checked) runCheck(false);
+    var r = lastResult; if (!r || !r.doc) { showTab('problems'); toast('Fix the YAML errors first. The Problems tab lists them.'); return; }
+    var res = window.WBScenarios.runChecks(cur, r.doc, cm.getValue()), fails = res.filter(function (c) { return !c.ok; }).length;
+    if (!fails) { toast('All requirements are met. No hints needed.'); showTab('checks'); return; }
+    hintsShown = Math.min(hintsShown + 1, fails);
+    renderChecks(r); showTab('checks');
+  });
+  $('reset').addEventListener('click', function () {
+    var b = $('reset');
+    if (b.dataset.armed) { delete b.dataset.armed; b.textContent = 'Reset'; delete store.drafts[cur.id]; save(); load(cur.id, false); toast('The starter file is back. Undo (Ctrl/Cmd + Z) restores your work.'); }
+    else { b.dataset.armed = '1'; b.textContent = 'Click again to reset'; setTimeout(function () { delete b.dataset.armed; b.textContent = 'Reset'; }, 3000); }
+  });
+  document.addEventListener('click', function (e) {
+    if (e.target.id === 'reveal') { showAnswer(); }
+    if (e.target.id === 'load-answer') { cm.setValue(BANK[cur.id].solution); runCheck(true); }
+    if (e.target.id === 'toast-next') { $('toast').hidden = true; $('next').click(); }
+    if (e.target.id === 'show-answer') { showTab('answer'); if (!answerShown) showAnswer(); }
+  });
+
+  // ---------- start ----------
+  renderProgress();
+  var startId = (location.hash || '').slice(1);
+  if (!S.some(function (s) { return s.id === startId; })) startId = store.last || S[0].id;
+  load(startId);
+  var tab = 'problems'; try { tab = sessionStorage.getItem(KEY + '-tab') || 'problems'; } catch (e) {}
+  showTab(tab);
+  window.addEventListener('hashchange', function () { var id = location.hash.slice(1); if (id && id !== cur.id && S.some(function (s) { return s.id === id; })) load(id); });
+})();
+
+}
+</script>
+</body>
+</html>
