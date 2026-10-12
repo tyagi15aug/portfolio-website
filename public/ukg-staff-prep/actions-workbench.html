@@ -602,6 +602,12 @@ button:focus-visible, select:focus-visible, a:focus-visible, [role=tab]:focus-vi
   .scbar .btn { flex: 1 1 auto; }
 }
 
+.sync { font-family: var(--f-mono); font-size: .72rem; color: var(--muted); white-space: nowrap; display: inline-flex; align-items: center; gap: .35rem; }
+.sync::before { content: ""; width: .5rem; height: .5rem; border-radius: 50%; background: var(--line); }
+.sync.cloud::before { background: var(--ok); }
+.sync.warn::before { background: var(--accent); }
+@media (max-width: 560px) { .sync { display: none; } }
+
 [hidden]{display:none!important}</style>
 </head>
 <body>
@@ -609,6 +615,7 @@ button:focus-visible, select:focus-visible, a:focus-visible, [role=tab]:focus-vi
 <a class="back" href="./">&larr; UKG Prep Guide</a>
 <span class="brand">Actions <span>Workbench</span></span>
 <span class="progress" id="progress" aria-live="polite"></span>
+<span class="sync local" id="sync"></span>
 </div></header>
 <main class="wb">
 <section class="scenario" aria-label="Scenario">
@@ -661,6 +668,92 @@ button:focus-visible, select:focus-visible, a:focus-visible, [role=tab]:focus-vi
 if (!window.CodeMirror || !window.jsyaml) {
   document.getElementById('editor').innerHTML = '<p class="nocm">The editor could not load. Check your network connection and reload the page.</p>';
 } else {
+/* Progress sync to the viewer's private store (claude.ai artifact only).
+   Outside claude.ai (for example the portfolio copy) it does nothing and the page keeps using localStorage.
+   opts: { doc, read() -> object, merge(local, remote) -> object, apply(merged), statusEl } */
+(function () {
+  'use strict';
+  window.ProgressSync = function (opts) {
+    var ref = null, last = '', writing = false, again = false, timer = null;
+    function status(text, cls, title) {
+      if (!opts.statusEl) return;
+      opts.statusEl.textContent = text;
+      opts.statusEl.className = 'sync ' + cls;
+      opts.statusEl.title = title || '';
+    }
+    status('Saved in this browser', 'local', 'Progress is saved in this browser only.');
+
+    function snapshotKey(d) { try { return JSON.stringify(d); } catch (e) { return ''; } }
+
+    function write() {
+      if (!ref) return;
+      if (writing) { again = true; return; }
+      var data = opts.read(), key = snapshotKey(data);
+      if (key === last) return;
+      writing = true;
+      ref.set(JSON.parse(key)).then(function () {
+        last = key;
+        status('Synced to your account', 'cloud', 'Progress follows you on every device where you are signed in to Claude.');
+      }, function () {
+        status('Not synced yet', 'warn', 'The last change is saved in this browser. It syncs with your next change.');
+      }).then(function () {
+        writing = false;
+        if (again) { again = false; write(); }
+      });
+    }
+
+    function start() {
+      if (!window.claude || typeof window.claude.use !== 'function') return;
+      Promise.all([window.claude.use('db'), window.claude.use('user')]).then(function (r) {
+        var db = r[0], user = r[1];
+        if (!db || !user) return null;
+        return user.id().then(function (id) {
+          if (!id) return;
+          ref = db.collection('data/users/' + id).doc(opts.doc);
+          return ref.get().then(function (snap) {
+            var remote = snap.exists ? (snap.data() || {}) : {};
+            last = snapshotKey(remote);
+            opts.apply(opts.merge(opts.read(), remote));
+            write();
+            status('Synced to your account', 'cloud', 'Progress follows you on every device where you are signed in to Claude.');
+            ref.onSnapshot(function (s) {
+              if (!s.exists) return;
+              var d = s.data() || {}, key = snapshotKey(d);
+              if (key === last) return;
+              last = key;
+              var merged = opts.merge(opts.read(), d);
+              opts.apply(merged);
+              if (snapshotKey(merged) !== key) write();
+            }, function () {
+              status('Sync paused', 'warn', 'Progress is still saved in this browser. Reload the page to sync again.');
+            });
+          });
+        });
+      }).catch(function () {
+        ref = null;
+        status('Saved in this browser', 'local', 'Progress is saved in this browser only.');
+      });
+    }
+    if (document.readyState === 'complete') setTimeout(start, 0); else window.addEventListener('load', start);
+
+    return { push: function () { if (!ref) return; clearTimeout(timer); timer = setTimeout(write, 700); } };
+  };
+
+  /* Last-writer-wins merge for a map of flags with per-key timestamps. */
+  window.ProgressSync.mergeFlags = function (lf, lt, rf, rt) {
+    lf = lf || {}; lt = lt || {}; rf = rf || {}; rt = rt || {};
+    var out = {}, stamps = {}, keys = {};
+    [lf, lt, rf, rt].forEach(function (m) { Object.keys(m).forEach(function (k) { keys[k] = 1; }); });
+    Object.keys(keys).forEach(function (k) {
+      var a = lt[k] || 0, b = rt[k] || 0, useRemote = b > a;
+      var v = (!a && !b) ? (lf[k] !== undefined && lf[k] !== null && lf[k] !== false ? lf[k] : rf[k]) : (useRemote ? rf[k] : lf[k]);
+      if (v !== undefined && v !== null && v !== false) out[k] = v;
+      if (a || b) stamps[k] = Math.max(a, b);
+    });
+    return { values: out, stamps: stamps };
+  };
+})();
+
 /* Actions Workbench: workflow checker.
    lintWorkflow(text, yamlLib) -> { doc, problems: [{sev, line, msg, why}], index }
    Pure functions; no DOM. Messages use ASD-STE100 style. */
@@ -1589,7 +1682,7 @@ if (!window.CodeMirror || !window.jsyaml) {
   var S = window.WBScenarios.SCENARIOS, LEVELS = window.WBScenarios.LEVELS, BANK = window.WB_YAML;
   var Lint = window.WBLint, Ex = window.WBExplain, Y = window.jsyaml;
   var KEY = 'actions-workbench-v1';
-  var store = { solved: {}, drafts: {}, last: null };
+  var store = { solved: {}, drafts: {}, dstamp: {}, last: null };
   try { var raw = localStorage.getItem(KEY); if (raw) store = Object.assign(store, JSON.parse(raw)); } catch (e) {}
   function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
 
@@ -1637,7 +1730,9 @@ if (!window.CodeMirror || !window.jsyaml) {
     renderProblems(r.problems);
     renderExplain(r.doc);
     if (checked) renderChecks(r);
-    if (cur) { store.drafts[cur.id] = text; save(); }
+    if (cur && store.drafts[cur.id] !== text && !(store.drafts[cur.id] === undefined && text === BANK[cur.id].starter)) {
+      store.drafts[cur.id] = text; store.dstamp = store.dstamp || {}; store.dstamp[cur.id] = Date.now(); save(); sync.push();
+    }
     lastResult = r;
     return r;
   }
@@ -1692,7 +1787,7 @@ if (!window.CodeMirror || !window.jsyaml) {
     $('tab-checks').querySelector('.badge').textContent = pass + '/' + res.length;
     $('tab-checks').querySelector('.badge').className = 'badge' + (pass === res.length ? ' ok' : '');
     var solved = pass === res.length && !errs;
-    if (solved && !store.solved[cur.id]) { store.solved[cur.id] = true; save(); renderProgress(); toast('Solved: ' + cur.title + '.', true); }
+    if (solved && !store.solved[cur.id]) { store.solved[cur.id] = true; save(); sync.push(); renderProgress(); toast('Solved: ' + cur.title + '.', true); }
     $('solved').hidden = !(solved || store.solved[cur.id]);
     return res;
   }
@@ -1796,7 +1891,7 @@ if (!window.CodeMirror || !window.jsyaml) {
   });
   $('reset').addEventListener('click', function () {
     var b = $('reset');
-    if (b.dataset.armed) { delete b.dataset.armed; b.textContent = 'Reset'; delete store.drafts[cur.id]; save(); load(cur.id, false); toast('The starter file is back. Undo (Ctrl/Cmd + Z) restores your work.'); }
+    if (b.dataset.armed) { delete b.dataset.armed; b.textContent = 'Reset'; delete store.drafts[cur.id]; store.dstamp = store.dstamp || {}; store.dstamp[cur.id] = Date.now(); save(); sync.push(); load(cur.id, false); toast('The starter file is back. Undo (Ctrl/Cmd + Z) restores your work.'); }
     else { b.dataset.armed = '1'; b.textContent = 'Click again to reset'; setTimeout(function () { delete b.dataset.armed; b.textContent = 'Reset'; }, 3000); }
   });
   document.addEventListener('click', function (e) {
@@ -1806,10 +1901,34 @@ if (!window.CodeMirror || !window.jsyaml) {
     if (e.target.id === 'show-answer') { showTab('answer'); if (!answerShown) showAnswer(); }
   });
 
+  // ---------- account sync (claude.ai only) ----------
+  var sync = { push: function () {} };
+  function syncStart() {
+    sync = window.ProgressSync({
+      doc: 'actions-workbench',
+      statusEl: $('sync'),
+      read: function () { return { solved: store.solved || {}, drafts: store.drafts || {}, dstamp: store.dstamp || {} }; },
+      merge: function (l, r) {
+        var solved = window.ProgressSync.mergeFlags(l.solved, {}, r.solved, {}).values;
+        var d = window.ProgressSync.mergeFlags(l.drafts, l.dstamp, r.drafts, r.dstamp);
+        return { solved: solved, drafts: d.values, dstamp: d.stamps };
+      },
+      apply: function (m) {
+        var before = store.drafts[cur.id];
+        store.solved = m.solved; store.drafts = m.drafts; store.dstamp = m.dstamp; save();
+        renderProgress();
+        $('solved').hidden = !store.solved[cur.id];
+        var now = store.drafts[cur.id];
+        if (now !== before && !cm.hasFocus()) { cm.setValue(now === undefined ? BANK[cur.id].starter : now); cm.clearHistory(); }
+      },
+    });
+  }
+
   // ---------- start ----------
   renderProgress();
   var startId = (location.hash || '').slice(1);
   if (!S.some(function (s) { return s.id === startId; })) startId = store.last || S[0].id;
+  syncStart();
   load(startId);
   var tab = 'problems'; try { tab = sessionStorage.getItem(KEY + '-tab') || 'problems'; } catch (e) {}
   showTab(tab);
