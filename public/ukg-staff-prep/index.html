@@ -2710,7 +2710,7 @@ List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
     var t = el.querySelector('.ctoggle'); if (t) t.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
   function syncExpandBtn() {
-    var allOpen = colls.every(function (c) { return c.classList.contains('open'); });
+    var allOpen = colls.every(function (c) { return c.classList.contains('open'); }) && (typeof chapters === 'undefined' || chapters.every(function (c) { return !c.classList.contains('chclosed'); }));
     expandBtn.textContent = allOpen ? 'Collapse all' : 'Expand all';
     expandBtn.setAttribute('aria-pressed', allOpen ? 'true' : 'false');
   }
@@ -2721,7 +2721,7 @@ List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
   expandBtn.addEventListener('click', function () {
     var open = expandBtn.getAttribute('aria-pressed') !== 'true';
     colls.forEach(function (c) { setOpen(c, open); });
-    if (open) { chapters.forEach(function (c) { setChapter(c, true); }); saveClosed(); }
+    chapters.forEach(function (c) { setChapter(c, open); }); saveClosed();
     syncExpandBtn();
   });
   // ---------- collapsible chapters ----------
@@ -2740,12 +2740,12 @@ List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
     b.innerHTML = '<span aria-hidden="true">&#9662;</span>';
     head.appendChild(b); head.classList.add('chhead');
     b.setAttribute('aria-expanded', 'true');
-    head.addEventListener('click', function (e) { if (e.target.closest('a')) return; setChapter(sec, sec.classList.contains('chclosed')); saveClosed(); });
+    head.addEventListener('click', function (e) { if (e.target.closest('a')) return; setChapter(sec, sec.classList.contains('chclosed')); saveClosed(); syncExpandBtn(); });
   });
   loadClosed().forEach(function (id) { var sec = document.getElementById(id); if (sec && chapters.indexOf(sec) !== -1) setChapter(sec, false); });
   function openChapterFor(el) {
     var sec = el && el.closest && el.closest('.sec');
-    if (sec && sec.classList.contains('chclosed')) { setChapter(sec, true); saveClosed(); }
+    if (sec && sec.classList.contains('chclosed')) { setChapter(sec, true); saveClosed(); syncExpandBtn(); }
   }
   function revealTarget(id) {
     var el = id && document.getElementById(id); if (!el) return;
