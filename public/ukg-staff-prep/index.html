@@ -642,7 +642,7 @@ html[data-cls] code, html[data-cls] pre { letter-spacing: 0 !important; word-spa
 /* Single-colour brand */
 .brand span { color: inherit; }
 /* Mobile drawer open: stop the page scrolling behind it */
-html.navlock, html.navlock body { overflow: hidden; }
+html.navlock { overflow: hidden; }
 /* Collapsible chapters */
 .chhead { position: relative; cursor: pointer; padding-right: 2.8rem; }
 .chtoggle { position: absolute; top: .1rem; right: 0; width: 2.1rem; height: 2.1rem; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--muted); cursor: pointer; font-size: 1rem; }
@@ -651,6 +651,12 @@ html.navlock, html.navlock body { overflow: hidden; }
 .sec.chclosed .chtoggle span { transform: rotate(-90deg); }
 .sec.chclosed:not(.chforce) > :not(.sechead) { display: none !important; }
 .sec.chclosed:not(.chforce) { padding-bottom: var(--s4); }
+
+/* Current position in the nav */
+.toc a.current { color: var(--link); font-weight: 700; background: color-mix(in srgb, var(--accent) 12%, transparent); box-shadow: inset 3px 0 0 var(--accent); padding-left: .45rem; border-radius: 0 4px 4px 0; }
+.toc a.top.current { padding-left: .5rem; }
+.toc li ul a.current { padding-left: .5rem; }
+.toc a.curgrp { color: var(--link); }
 </style>
 <div class="toolbar"><div class="tbin">
 <a class="brand" href="#start">UKG-STE <span>Staff Prep</span></a>
@@ -2848,6 +2854,34 @@ List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
   var fabTick = null;
   window.addEventListener('scroll', function () { if (fabTick) return; fabTick = setTimeout(function () { fabTick = null; syncFab(); }, 120); }, { passive: true });
   syncFab();
+
+  // ---------- highlight the nav item for the current position ----------
+  var curLink = null, curParent = null, spyTick = false;
+  function spy() {
+    spyTick = false;
+    var i = currentTopic(), a = i >= 0 ? tocLinks[i] : tocLinks[0];
+    if (a === curLink) return;
+    Array.prototype.forEach.call(toc.querySelectorAll('.current'), function (x) { x.classList.remove('current'); x.removeAttribute('aria-current'); });
+    Array.prototype.forEach.call(toc.querySelectorAll('.curgrp'), function (x) { x.classList.remove('curgrp'); });
+    curLink = a; a.classList.add('current'); a.setAttribute('aria-current', 'location');
+    var li = a.closest('li.grp') || (a.closest('ul') && a.closest('ul').closest('li'));
+    curParent = li && li.querySelector(':scope > a.top') ? li.querySelector(':scope > a.top') : null;
+    if (curParent && curParent !== a) curParent.classList.add('curgrp'); else curParent = null;
+    // keep the highlighted item visible inside the nav list (without moving the page)
+    if (toc.getClientRects().length && toc.scrollHeight > toc.clientHeight && (!mqMobile.matches || toc.classList.contains('open'))) {
+      var tr = toc.getBoundingClientRect(), ar = a.getBoundingClientRect();
+      if (ar.top < tr.top + 8) toc.scrollTop += ar.top - tr.top - 24;
+      else if (ar.bottom > tr.bottom - 8) toc.scrollTop += ar.bottom - tr.bottom + 24;
+    }
+  }
+  function queueSpy() { if (spyTick) return; spyTick = true; requestAnimationFrame(spy); }
+  window.addEventListener('scroll', queueSpy, { passive: true });
+  window.addEventListener('resize', queueSpy);
+  window.addEventListener('hashchange', queueSpy);
+  toc.addEventListener('transitionend', queueSpy);
+  navbtn.addEventListener('click', function () { curLink = null; setTimeout(spy, 30); });
+  document.addEventListener('click', function () { setTimeout(queueSpy, 60); });
+  spy();
 })();
 
 (function () {
