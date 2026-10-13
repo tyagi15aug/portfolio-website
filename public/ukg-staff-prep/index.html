@@ -1,4 +1,4 @@
-<title>UKG Staff Prep Guide</title>
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>UKG Staff Prep Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;500;600;700&family=Figtree:wght@400;500;600;700&family=Merriweather:wght@400;700&family=Literata:ital,wght@0,400;0,600;0,700;1,400&display=swap">
 <style>/* Layout: technical-manual field guide. Sticky toolbar, left contents rail, one reading column with data-module codes per question. */
@@ -657,6 +657,18 @@ html.navlock { overflow: hidden; }
 .toc a.top.current { padding-left: .5rem; }
 .toc li ul a.current { padding-left: .5rem; }
 .toc a.curgrp { color: var(--link); }
+
+/* Phones: larger text. rem units follow the root size, so raise both. */
+@media (max-width: 560px) {
+  html { font-size: calc(17.5px * var(--zoom)); }
+  html body, html[data-skin] body { font-size: calc(18.5px * var(--zoom)); }
+  .done, .testing, .concept dl, .caution, .note, .tbl { font-size: 1rem; }
+  figure.code pre { font-size: .9rem; }
+  /* keep the sticky toolbar compact: its controls stay at a fixed small size */
+  .toolbar button, .toolbar label, .toolbar input, .toolbar span, .toolbar select { font-size: 14px; }
+  .toolbar .brand { font-size: 16px; }
+  .toolbar button, .toolbar .search input { padding-block: .22rem; }
+}
 </style>
 <div class="toolbar"><div class="tbin">
 <a class="brand" href="#start">UKG-STE <span>Staff Prep</span></a>
