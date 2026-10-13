@@ -20,7 +20,7 @@
 @media (max-width:560px){.brand{display:none}.backlink{order:0}}</style>
 <title>UKG Staff Prep Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;500;600;700&family=Literata:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;500;600;700&family=Figtree:wght@400;500;600;700&family=Merriweather:wght@400;700&family=Literata:ital,wght@0,400;0,600;0,700;1,400&display=swap">
 <style>/* Layout: technical-manual field guide. Sticky toolbar, left contents rail, one reading column with data-module codes per question. */
 :root {
   --bg: #eef1f3;
@@ -559,6 +559,47 @@ html[data-skin="dyslexia"] .toc li ul a.done span { font-style: normal !importan
   .fab { display: inline-flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem; padding: 0; border-radius: 50%; border: 2px solid var(--surface); background: var(--ink); color: var(--surface); font-size: .8rem; line-height: 1; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,.25); opacity: .92; }
   .fab:disabled { opacity: .35; cursor: default; }
 }
+
+/* ---- Dark palettes: each theme has its own hue, so dark mode is not the same everywhere ---- */
+html[data-skin="calm"][data-mode="dark"] { --bg: #1d1a16; --surface: #26221d; --sunk: #312c25; --ink: #ece6d9; --muted: #aca392; --line: #40392f; --accent: #f0a566; --accent-soft: #3a2718; --link: #8fc3e6; --note: #7fd1b5; --note-soft: #16302a; --mark: #5c4a14; --code-bg: #171410; color-scheme: dark; }
+html[data-skin="dyslexia"][data-mode="dark"] { --bg: #24231a; --surface: #2d2b21; --sunk: #38352a; --ink: #f1ecd4; --muted: #b5ae92; --line: #47432f; --accent: #f4b04f; --accent-soft: #3d2d12; --link: #8ec5ea; --note: #86d6b4; --note-soft: #17302a; --mark: #665415; --code-bg: #1e1d15; color-scheme: dark; }
+html[data-skin="lexend"][data-mode="dark"] { --bg: #0e1a17; --surface: #14231f; --sunk: #1b2e29; --ink: #e2f0ea; --muted: #9db8ae; --line: #27403a; --accent: #f29a52; --accent-soft: #33200f; --link: #6cc6ea; --note: #5fd8b8; --note-soft: #103029; --mark: #53480f; --code-bg: #0b1512; color-scheme: dark; }
+html[data-skin="contrast"][data-mode="dark"] { --bg: #000000; --surface: #000000; --sunk: #12161a; --ink: #ffffff; --muted: #d9e1e6; --line: #8da0ab; --accent: #ffb066; --accent-soft: #2b1a0a; --link: #8fd0ff; --note: #7fe6cf; --note-soft: #0c2a25; --mark: #665500; --code-bg: #0a0d0f; color-scheme: dark; }
+
+/* ---- Theme: Geometric (Nexa / Mont style: geometric sans, high x-height, cool blue-grey paper) ---- */
+html[data-skin="geometric"] { --f-display: "Figtree", "Nexa", "Montserrat", Verdana, sans-serif; --f-body: "Figtree", "Nexa", "Montserrat", Verdana, sans-serif; }
+html[data-skin="geometric"] body { line-height: 1.8; letter-spacing: .008em; word-spacing: .05em; font-size: calc(17.5px * var(--zoom)); }
+html[data-skin="geometric"] h1, html[data-skin="geometric"] h2, html[data-skin="geometric"] h3, html[data-skin="geometric"] h4 { font-weight: 700; letter-spacing: 0; line-height: 1.3; text-wrap: pretty; }
+html[data-skin="geometric"] main { max-width: 1320px; }
+html[data-skin="geometric"] * { text-transform: none !important; }
+html[data-skin="geometric"] code, html[data-skin="geometric"] pre { letter-spacing: 0; word-spacing: 0; }
+html[data-skin="geometric"]:not([data-mode="dark"]) { --bg: #f1f5fa; --surface: #fbfdff; --sunk: #e2eaf3; --ink: #16202c; --muted: #4b5b6e; --line: #cbd6e3; --accent: #b04a14; --accent-soft: #fbe9dc; --link: #0b5aa0; --code-bg: #eaf0f7; }
+html[data-skin="geometric"][data-mode="dark"] { --bg: #0c1422; --surface: #121d2f; --sunk: #1a2940; --ink: #e5edf8; --muted: #9aabc4; --line: #2a3b58; --accent: #ff9f5e; --accent-soft: #33200f; --link: #78b8f7; --note: #62d6c0; --note-soft: #0f2d2c; --mark: #56490f; --code-bg: #0a101b; color-scheme: dark; }
+
+/* ---- Theme: Book serif (Alkes / Audela style: warm humanist serif, generous x-height, soft lavender-grey paper) ---- */
+html[data-skin="book"] { --f-display: "Merriweather", Georgia, "Times New Roman", serif; --f-body: "Merriweather", Georgia, "Times New Roman", serif; }
+html[data-skin="book"] body { line-height: 1.95; letter-spacing: .004em; font-size: calc(16px * var(--zoom)); }
+html[data-skin="book"] h1, html[data-skin="book"] h2, html[data-skin="book"] h3, html[data-skin="book"] h4 { font-weight: 700; letter-spacing: 0; line-height: 1.35; text-wrap: pretty; }
+html[data-skin="book"] main { max-width: 1320px; }
+html[data-skin="book"] * { text-transform: none !important; }
+html[data-skin="book"] code, html[data-skin="book"] pre { letter-spacing: 0; word-spacing: 0; }
+html[data-skin="book"]:not([data-mode="dark"]) { --bg: #f4f3f8; --surface: #fdfcff; --sunk: #e9e7f1; --ink: #1d1b26; --muted: #575468; --line: #d5d2e2; --accent: #a4421a; --accent-soft: #f7e8e0; --link: #2d5aa0; --code-bg: #eeedf5; }
+html[data-skin="book"][data-mode="dark"] { --bg: #16131e; --surface: #1e1a29; --sunk: #282336; --ink: #eae7f4; --muted: #a5a0bb; --line: #383250; --accent: #f2a368; --accent-soft: #35210f; --link: #92b9f2; --note: #7ad6bd; --note-soft: #122c29; --mark: #574814; --code-bg: #110f18; color-scheme: dark; }
+
+/* ---- Theme: Classic (Georgia and Verdana, the two screen fonts named in the article; no download needed) ---- */
+html[data-skin="classic"] { --f-display: Verdana, "Segoe UI", sans-serif; --f-body: Georgia, "Times New Roman", serif; }
+html[data-skin="classic"] body { line-height: 1.8; font-size: calc(18px * var(--zoom)); }
+html[data-skin="classic"] h1, html[data-skin="classic"] h2, html[data-skin="classic"] h3, html[data-skin="classic"] h4, html[data-skin="classic"] h5 { font-weight: 700; letter-spacing: 0; line-height: 1.3; text-wrap: pretty; }
+html[data-skin="classic"] main { max-width: 1320px; }
+html[data-skin="classic"] * { text-transform: none !important; }
+html[data-skin="classic"] code, html[data-skin="classic"] pre { letter-spacing: 0; word-spacing: 0; }
+html[data-skin="classic"]:not([data-mode="dark"]) { --bg: #ffffff; --surface: #ffffff; --sunk: #f1f1f1; --ink: #111111; --muted: #555555; --line: #d8d8d8; --accent: #a33f0f; --accent-soft: #fbe9de; --link: #0a55a0; --code-bg: #f5f5f5; }
+html[data-skin="classic"][data-mode="dark"] { --bg: #121212; --surface: #1b1b1b; --sunk: #262626; --ink: #ededed; --muted: #ababab; --line: #3a3a3a; --accent: #ee9a5e; --accent-soft: #35210f; --link: #82bdef; --note: #74d6bb; --note-soft: #112b27; --mark: #5a4b10; --code-bg: #0e0e0e; color-scheme: dark; }
+
+.skinlist button[data-skin="geometric"] strong { font-family: "Figtree", Verdana, sans-serif; }
+.skinlist button[data-skin="book"] strong { font-family: "Merriweather", Georgia, serif; }
+.skinlist button[data-skin="classic"] strong { font-family: Georgia, serif; }
+@media (max-width: 960px) { html[data-skin] main { max-width: none; } }
 </style>
 </head>
 <body>
@@ -2146,7 +2187,7 @@ List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
   var root = document.documentElement;
   function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function set(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
-  var SKINS = ['default', 'calm', 'dyslexia', 'lexend', 'contrast'];
+  var SKINS = ['default', 'calm', 'dyslexia', 'lexend', 'geometric', 'book', 'classic', 'contrast'];
   var host = root.getAttribute('data-theme');          // value set by the host page, if any
   function modePref() { var m = get('theme-preference'); return m === 'light' || m === 'dark' ? m : 'system'; }
   function isDark() {
@@ -2230,9 +2271,12 @@ List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
     panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Reading theme');
     var skinInfo = [
       ['default', 'Original', 'The first look of this guide.'],
-      ['calm', 'Calm reading', 'Serif type, warm paper, narrow column, loose lines.'],
-      ['dyslexia', 'Dyslexia-friendly', 'Atkinson Hyperlegible, wide spacing, no italics or capitals.'],
-      ['lexend', 'Lexend', 'Font made for reading fluency, extra spacing, soft green.'],
+      ['calm', 'Calm reading', 'Serif type, warm paper, narrow column, loose lines. Warm brown in dark.'],
+      ['dyslexia', 'Dyslexia-friendly', 'Atkinson Hyperlegible, wide spacing, no italics or capitals. Dim olive in dark.'],
+      ['lexend', 'Lexend', 'Font made for reading fluency, extra spacing, soft green. Deep forest in dark.'],
+      ['geometric', 'Geometric', 'Nexa and Mont style: clean geometric sans, tall letters, cool blue-grey; midnight blue in dark.'],
+      ['book', 'Book serif', 'Alkes and Audela style: warm book serif, loose lines, soft lavender-grey; plum in dark.'],
+      ['classic', 'Classic', 'Georgia text with Verdana headings. Plain white; true black in dark.'],
       ['contrast', 'High contrast', 'Large plain type, strong colours, thick focus rings.']
     ];
     var h = '<h2>Theme</h2><div class="skinlist" id="skinlist">' + skinInfo.map(function (s) { return '<button type="button" data-skin="' + s[0] + '" aria-pressed="false"><strong>' + s[1] + '</strong><span>' + s[2] + '</span></button>'; }).join('') + '</div>' +
