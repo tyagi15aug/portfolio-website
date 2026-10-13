@@ -524,7 +524,7 @@ html[data-skin="dyslexia"] .toc li ul a.done span { font-style: normal !importan
 .gtgl, .tocback { display: none; }
 .fabs { display: none; }
 @media (max-width: 960px) {
-  html .toc, html[data-nav="hidden"] .toc { display: block; position: fixed; left: 0; top: 3.25rem; bottom: 0; width: min(86vw, 340px); max-height: none; z-index: 30; background: var(--surface); border-right: 1px solid var(--line); border-bottom: 0; box-shadow: 6px 0 24px rgba(0,0,0,.25); padding: var(--s3) var(--s4) var(--s6); overflow-y: auto; overscroll-behavior: contain; transform: translateX(-104%); visibility: hidden; transition: transform .2s ease, visibility 0s linear .2s; }
+  html .toc, html[data-nav="hidden"] .toc { display: block; position: fixed; left: 0; top: 3.25rem; bottom: auto; height: calc(100vh - var(--toc-top, 3.25rem)); height: calc(100dvh - var(--toc-top, 3.25rem)); width: min(86vw, 340px); max-height: none; z-index: 30; background: var(--surface); border-right: 1px solid var(--line); border-bottom: 0; box-shadow: 6px 0 24px rgba(0,0,0,.25); padding: var(--s3) var(--s4) calc(var(--s6) + env(safe-area-inset-bottom, 0px) + 4rem); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y; transform: translateX(-104%); visibility: hidden; transition: transform .2s ease, visibility 0s linear .2s; }
   html .toc.open, html[data-nav="hidden"] .toc.open { transform: none; visibility: visible; transition: transform .2s ease; }
   .tocback { display: block; position: fixed; inset: 0; z-index: 25; background: rgba(0,0,0,.4); }
   .tocback[hidden] { display: none; }
@@ -638,6 +638,19 @@ html[data-cls] code, html[data-cls] pre { letter-spacing: 0 !important; word-spa
 /* Zoom safety: tables wrap instead of pushing the page sideways */
 .tbl td:first-child { white-space: normal; }
 .tbl th, .tbl td { overflow-wrap: anywhere; }
+
+/* Single-colour brand */
+.brand span { color: inherit; }
+/* Mobile drawer open: stop the page scrolling behind it */
+html.navlock, html.navlock body { overflow: hidden; }
+/* Collapsible chapters */
+.chhead { position: relative; cursor: pointer; padding-right: 2.8rem; }
+.chtoggle { position: absolute; top: .1rem; right: 0; width: 2.1rem; height: 2.1rem; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--muted); cursor: pointer; font-size: 1rem; }
+.chtoggle:hover { color: var(--link); border-color: var(--link); }
+.chtoggle span { display: inline-block; transition: transform .15s ease; }
+.sec.chclosed .chtoggle span { transform: rotate(-90deg); }
+.sec.chclosed:not(.chforce) > :not(.sechead) { display: none !important; }
+.sec.chclosed:not(.chforce) { padding-bottom: var(--s4); }
 </style>
 <div class="toolbar"><div class="tbin">
 <a class="brand" href="#start">UKG-STE <span>Staff Prep</span></a>
@@ -649,7 +662,7 @@ html[data-cls] code, html[data-cls] pre { letter-spacing: 0 !important; word-spa
 <button type="button" class="navbtn" id="navbtn" aria-expanded="false">Contents <span class="navprog" id="navprog"></span></button>
 </div></div>
 <div class="wrap">
-<nav class="toc" id="toc"><ul><li><a class="top" href="#start">Start here</a></li><li><a class="top" href="#k0">K8s &amp; EKS from zero</a><ul><li><a href="#explorer"><span>map</span>Cluster explorer</a></li><li><a href="#p1"><span>1</span>The main components, from the smallest up</a></li><li><a href="#p2"><span>2</span>The architecture that runs the components</a></li><li><a href="#p3"><span>3</span>Working with a cluster: kubectl and YAML</a></li><li><a href="#p4"><span>4</span>Each component in more depth</a></li><li><a href="#p5"><span>5</span>What keeps it healthy in production</a></li></ul></li><li><a class="top" href="#gha">GitHub Actions</a><ul><li><a href="#G1"><span>G1</span>One CI for 300 repos</a></li><li><a href="#G2"><span>G2</span>45 minutes to 10 minutes</a></li><li><a href="#G3"><span>G3</span>A secret leaked from a fork PR</a></li><li><a href="#G4"><span>G4</span>Run E2E against a private EKS environment</a></li><li><a href="#G5"><span>G5</span>Thursday timeouts</a></li><li><a href="#G6"><span>G6</span>Promote, do not rebuild</a></li><li><a href="#G7"><span>G7</span>Test results to Slack and a dashboard</a></li></ul></li><li><a class="top" href="#k8s">Kubernetes scenarios</a><ul><li><a href="#K1"><span>K1</span>Running but 503</a></li><li><a href="#K2"><span>K2</span>CrashLoopBackOff after a config change</a></li><li><a href="#K3"><span>K3</span>2,000 browser sessions at 9 AM</a></li><li><a href="#K4"><span>K4</span>Noisy neighbor</a></li><li><a href="#K5"><span>K5</span>Zero-downtime deploy that is not</a></li><li><a href="#K6"><span>K6</span>Pod cannot call AWS</a></li><li><a href="#K7"><span>K7</span>Node NotReady storm</a></li></ul></li><li><a class="top" href="#design">Software design</a><ul><li><a href="#D1"><span>D1</span>One API-testing layer, and the framework decision</a></li><li><a href="#D2"><span>D2</span>Migrate 10,000 Selenium tests to Playwright</a></li><li><a href="#D3"><span>D3</span>A framework release broke three teams</a></li><li><a href="#D4"><span>D4</span>Test data for parallel runs in shared environments</a></li><li><a href="#D5"><span>D5</span>Is the framework working?</a></li><li><a href="#D6"><span>D6</span>Failure-triage service</a></li><li><a href="#D7"><span>D7</span>Webhooks vs polling vs queues</a></li><li><a href="#D8"><span>D8</span>Our app sends email over SMTP. How do we confirm it was sent?</a></li><li><a href="#D9"><span>D9</span>Test email in automated tests, for 100 teams</a></li><li><a href="#D10"><span>D10</span>Emails go to spam or do not arrive</a></li></ul></li><li><a class="top" href="#leadership">Leadership</a><ul><li><a href="#L1"><span>L1</span>A team refuses to migrate</a></li><li><a href="#L2"><span>L2</span>You became the bottleneck</a></li><li><a href="#L3"><span>L3</span>Disagree with a Principal engineer</a></li><li><a href="#L4"><span>L4</span>Release blocked at 6 PM</a></li><li><a href="#L5"><span>L5</span>Prove the framework is worth it</a></li><li><a href="#L6"><span>L6</span>Duplicate utilities everywhere</a></li><li><a href="#L7"><span>L7</span>Behavioral stories from your real experience</a></li></ul></li><li><a class="top" href="#capstone">Capstone</a><ul><li><a href="#C1"><span>C1</span>Design the whole test platform on AWS for 200 teams</a></li></ul></li><li><a class="top" href="#lens">Interviewer&#x27;s lens</a><ul><li><a href="#P1"><span>P1</span>Time zones, DST and pay periods</a></li><li><a href="#P2"><span>P2</span>What stays out of the shared framework</a></li><li><a href="#P3"><span>P3</span>E2E is 70% of the CI cost</a></li><li><a href="#P4"><span>P4</span>Quarantine, fix or delete a flaky test</a></li><li><a href="#P5"><span>P5</span>The test author&#x27;s API</a></li><li><a href="#P6"><span>P6</span>Why EKS for test runners at all?</a></li><li><a href="#P7"><span>P7</span>AI in the test platform</a></li><li><a href="#P8"><span>P8</span>SLOs for the test platform</a></li><li><a href="#P9"><span>P9</span>Test accounts and secrets for 200 teams</a></li><li><a href="#P10"><span>P10</span>A decision you would reverse</a></li><li><a href="#P11"><span>P11</span>Run the test platform on more than one cloud</a></li><li><a href="#P12"><span>P12</span>Upgrade the framework with zero downtime</a></li><li><a href="#P13"><span>P13</span>Where do tests run in the pipeline?</a></li></ul></li><li><a class="top" href="#faq">Frequently asked</a></li><li><a class="top" href="#facts">Fact updates</a></li><li><a class="top" href="#glossary">Glossary</a></li></ul></nav>
+<nav class="toc" id="toc"><ul><li><a class="top" href="#start">Start here</a></li><li><a class="top" href="#k0">K8s &amp; EKS from zero</a><ul><li><a href="#explorer"><span>map</span>Cluster explorer</a></li><li><a href="#p1"><span>1</span>The main components, from the smallest up</a></li><li><a href="#p2"><span>2</span>The architecture that runs the components</a></li><li><a href="#p3"><span>3</span>Working with a cluster: kubectl and YAML</a></li><li><a href="#p4"><span>4</span>Each component in more depth</a></li><li><a href="#p5"><span>5</span>What keeps it healthy in production</a></li></ul></li><li><a class="top" href="#gha">GitHub Actions</a><ul><li><a href="#G1"><span>G1</span>One CI for 300 repos</a></li><li><a href="#G2"><span>G2</span>45 minutes to 10 minutes</a></li><li><a href="#G3"><span>G3</span>A secret leaked from a fork PR</a></li><li><a href="#G4"><span>G4</span>Run E2E against a private EKS environment</a></li><li><a href="#G5"><span>G5</span>Thursday timeouts</a></li><li><a href="#G6"><span>G6</span>Promote, do not rebuild</a></li><li><a href="#G7"><span>G7</span>Test results to Slack and a dashboard</a></li></ul></li><li><a class="top" href="#k8s">Kubernetes scenarios</a><ul><li><a href="#K1"><span>K1</span>Running but 503</a></li><li><a href="#K2"><span>K2</span>CrashLoopBackOff after a config change</a></li><li><a href="#K3"><span>K3</span>2,000 browser sessions at 9 AM</a></li><li><a href="#K4"><span>K4</span>Noisy neighbor</a></li><li><a href="#K5"><span>K5</span>Zero-downtime deploy that is not</a></li><li><a href="#K6"><span>K6</span>Pod cannot call AWS</a></li><li><a href="#K7"><span>K7</span>Node NotReady storm</a></li></ul></li><li><a class="top" href="#design">Software design</a><ul><li><a href="#D1"><span>D1</span>One API-testing layer, and the framework decision</a></li><li><a href="#D2"><span>D2</span>Migrate 10,000 Selenium tests to Playwright</a></li><li><a href="#D3"><span>D3</span>A framework release broke three teams</a></li><li><a href="#D4"><span>D4</span>Test data for parallel runs in shared environments</a></li><li><a href="#D5"><span>D5</span>Is the framework working?</a></li><li><a href="#D6"><span>D6</span>Failure-triage service</a></li><li><a href="#D7"><span>D7</span>Webhooks vs polling vs queues</a></li><li><a href="#D8"><span>D8</span>Our app sends email over SMTP. How do we confirm it was sent?</a></li><li><a href="#D9"><span>D9</span>Test email in automated tests, for 100 teams</a></li><li><a href="#D10"><span>D10</span>Emails go to spam or do not arrive</a></li></ul></li><li><a class="top" href="#leadership">Leadership</a><ul><li><a href="#L1"><span>L1</span>A team refuses to migrate</a></li><li><a href="#L2"><span>L2</span>You became the bottleneck</a></li><li><a href="#L3"><span>L3</span>Disagree with a Principal engineer</a></li><li><a href="#L4"><span>L4</span>Release blocked at 6 PM</a></li><li><a href="#L5"><span>L5</span>Prove the framework is worth it</a></li><li><a href="#L6"><span>L6</span>Duplicate utilities everywhere</a></li><li><a href="#L7"><span>L7</span>Behavioral stories from your real experience</a></li></ul></li><li><a class="top" href="#capstone">Capstone</a><ul><li><a href="#C1"><span>C1</span>Design the whole test platform on AWS for 200 teams</a></li></ul></li><li><a class="top" href="#lens">Interviewer&#x27;s lens</a><ul><li><a href="#P1"><span>P1</span>Time zones, DST and pay periods</a></li><li><a href="#P2"><span>P2</span>What stays out of the shared framework</a></li><li><a href="#P3"><span>P3</span>E2E is 70% of the CI cost</a></li><li><a href="#P4"><span>P4</span>Quarantine, fix or delete a flaky test</a></li><li><a href="#P5"><span>P5</span>The test author&#x27;s API</a></li><li><a href="#P6"><span>P6</span>Why EKS for test runners at all?</a></li><li><a href="#P7"><span>P7</span>AI in the test platform</a></li><li><a href="#P8"><span>P8</span>SLOs for the test platform</a></li><li><a href="#P9"><span>P9</span>Test accounts and secrets for 200 teams</a></li><li><a href="#P10"><span>P10</span>A decision you would reverse</a></li><li><a href="#P11"><span>P11</span>Run the test platform on more than one cloud</a></li><li><a href="#P12"><span>P12</span>Upgrade the framework with zero downtime</a></li><li><a href="#P13"><span>P13</span>Where do tests run in the pipeline?</a></li></ul></li><li><a class="top" href="#faq">Frequently asked</a><ul><li><a href="#faq-ukg-context"><span>UKG</span>UKG: company and interview process</a></li><li><a href="#faq-selenium"><span>SEL</span>Selenium</a></li><li><a href="#faq-playwright"><span>PW</span>Playwright</a></li><li><a href="#faq-java-testing"><span>JVM</span>Java test stack: Maven, TestNG, JUnit 5</a></li><li><a href="#faq-api-testing"><span>API</span>API testing</a></li><li><a href="#faq-aws-basics"><span>AWS</span>AWS basics</a></li><li><a href="#faq-docker"><span>DKR</span>Docker</a></li><li><a href="#faq-ci-cd-general"><span>CI</span>CI/CD fundamentals</a></li><li><a href="#faq-observability"><span>OBS</span>Observability</a></li><li><a href="#faq-system-design"><span>SYS</span>System design (platform-focused)</a></li><li><a href="#faq-coding"><span>CODE</span>Coding problems likely for this role</a></li></ul></li><li><a class="top" href="#facts">Fact updates</a></li><li><a class="top" href="#glossary">Glossary</a></li></ul></nav>
 <main id="main">
 <section class="sec start" id="start">
 <p class="eyebrow">Staff Engineer · P4 · Noida · Round 2</p>
@@ -2631,10 +2644,12 @@ List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
   }
   function setDrawer(open) {
     if (open) {
-      var tb = document.querySelector('.toolbar'); toc.style.top = Math.max(0, Math.round(tb.getBoundingClientRect().bottom)) + 'px';
+      var tb = document.querySelector('.toolbar'); var topPx = Math.max(0, Math.round(tb.getBoundingClientRect().bottom)); toc.style.top = topPx + 'px'; document.documentElement.style.setProperty('--toc-top', topPx + 'px');
       openGroupFor(tocLinks[currentTopic()] || tocLinks[0]);
     }
     toc.classList.toggle('open', open); backdrop.hidden = !open || !mqMobile.matches;
+    document.documentElement.classList.toggle('navlock', open && mqMobile.matches);
+    if (open) toc.scrollTop = 0;
     navbtn.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
   navbtn.addEventListener('click', function () { setDrawer(!toc.classList.contains('open')); });
@@ -2676,10 +2691,35 @@ List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
   expandBtn.addEventListener('click', function () {
     var open = expandBtn.getAttribute('aria-pressed') !== 'true';
     colls.forEach(function (c) { setOpen(c, open); });
+    if (open) { chapters.forEach(function (c) { setChapter(c, true); }); saveClosed(); }
     syncExpandBtn();
   });
+  // ---------- collapsible chapters ----------
+  var chapters = Array.prototype.slice.call(document.querySelectorAll('main .sec')).filter(function (s) { return s.querySelector(':scope > .sechead'); });
+  var CHKEY = 'ukg-chclosed';
+  function loadClosed() { try { return JSON.parse(localStorage.getItem(CHKEY) || '[]'); } catch (e) { return []; } }
+  function saveClosed() { try { localStorage.setItem(CHKEY, JSON.stringify(chapters.filter(function (c) { return c.classList.contains('chclosed'); }).map(function (c) { return c.id; }))); } catch (e) {} }
+  function setChapter(sec, open) {
+    sec.classList.toggle('chclosed', !open);
+    var b = sec.querySelector(':scope > .sechead > .chtoggle'); if (b) b.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  chapters.forEach(function (sec) {
+    var head = sec.querySelector(':scope > .sechead');
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'chtoggle';
+    var h = head.querySelector('h2'); b.setAttribute('aria-label', 'Show or hide chapter: ' + (h ? h.textContent : ''));
+    b.innerHTML = '<span aria-hidden="true">&#9662;</span>';
+    head.appendChild(b); head.classList.add('chhead');
+    b.setAttribute('aria-expanded', 'true');
+    head.addEventListener('click', function (e) { if (e.target.closest('a')) return; setChapter(sec, sec.classList.contains('chclosed')); saveClosed(); });
+  });
+  loadClosed().forEach(function (id) { var sec = document.getElementById(id); if (sec && chapters.indexOf(sec) !== -1) setChapter(sec, false); });
+  function openChapterFor(el) {
+    var sec = el && el.closest && el.closest('.sec');
+    if (sec && sec.classList.contains('chclosed')) { setChapter(sec, true); saveClosed(); }
+  }
   function revealTarget(id) {
     var el = id && document.getElementById(id); if (!el) return;
+    openChapterFor(el);
     var c = el.classList.contains('coll') ? el : el.closest('.coll');
     if (c && !c.classList.contains('open')) { setOpen(c, true); syncExpandBtn(); }
   }
@@ -2731,6 +2771,7 @@ List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
     document.querySelectorAll('.sec').forEach(function (s) {
       var any = s.querySelector('.q:not(.hidden-by-search), .lesson:not(.hidden-by-search), .faqitem:not(.hidden-by-search), .fix:not(.hidden-by-search), .tbl.facts tbody tr:not(.hidden-by-search), .gloss > div:not(.hidden-by-search)');
       s.classList.toggle('hidden-by-search', searching && !any);
+      s.classList.toggle('chforce', searching);
     });
     nores.hidden = !(searching && shown === 0);
     scount.textContent = searching ? (shown + (shown === 1 ? ' match' : ' matches')) : '';
