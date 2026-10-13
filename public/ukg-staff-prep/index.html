@@ -593,6 +593,12 @@ html[data-mode="dark"]:not([data-cmode="light"]), html[data-cmode="dark"] { --sc
 .steps > li > h5 { color: var(--sc); }
 .steps > li::marker { color: var(--sc); }
 .steps:not(.numbered) > li { padding-left: .6rem; }
+/* Numbers drawn in the flow with a counter, not as outside list markers. Outside markers drift out of the box at high zoom. */
+.steps { list-style: none; padding-left: 0; counter-reset: st; }
+.steps > li { list-style: none; counter-increment: st; min-width: 0; overflow-wrap: anywhere; }
+.steps:not(.numbered) > li > h5:first-child::before { content: counter(st) ". "; color: var(--sc); }
+.steps:not(.numbered) > li:not(:has(> h5:first-child))::before { content: counter(st) ". "; font-family: var(--f-display); font-weight: 700; color: var(--sc); }
+.steps.numbered > li { counter-increment: none; }
 
 /* ---- Mix and match: custom fonts, colours and background texture ---- */
 html[data-cbg][data-cbg][data-cbg] { --surface: color-mix(in srgb, var(--bg) 93%, var(--ink)); --sunk: color-mix(in srgb, var(--bg) 87%, var(--ink)); --line: color-mix(in srgb, var(--bg) 78%, var(--ink)); --code-bg: color-mix(in srgb, var(--bg) 91%, var(--ink)); --note-soft: color-mix(in srgb, var(--note) 16%, var(--bg)); --mark: color-mix(in srgb, var(--accent) 38%, var(--bg)); }
@@ -628,6 +634,10 @@ html[data-chd] h1, html[data-chd] h2, html[data-chd] h3, html[data-chd] h4, html
 html[data-clh] body { line-height: var(--lh) !important; }
 html[data-cls] body { letter-spacing: var(--ls) !important; word-spacing: var(--ws) !important; }
 html[data-cls] code, html[data-cls] pre { letter-spacing: 0 !important; word-spacing: 0 !important; }
+
+/* Zoom safety: tables wrap instead of pushing the page sideways */
+.tbl td:first-child { white-space: normal; }
+.tbl th, .tbl td { overflow-wrap: anywhere; }
 </style>
 <div class="toolbar"><div class="tbin">
 <a class="brand" href="#start">UKG-STE <span>Staff Prep</span></a>
