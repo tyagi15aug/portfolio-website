@@ -664,11 +664,24 @@ html.navlock { overflow: hidden; }
   html body, html[data-skin] body { font-size: calc(18.5px * var(--zoom)); }
   .done, .testing, .concept dl, .caution, .note, .tbl { font-size: 1rem; }
   figure.code pre { font-size: .9rem; }
-  /* keep the sticky toolbar compact: its controls stay at a fixed small size */
-  .toolbar button, .toolbar label, .toolbar input, .toolbar span, .toolbar select { font-size: 14px; }
-  .toolbar .brand { font-size: 16px; }
-  .toolbar button, .toolbar .search input { padding-block: .22rem; }
 }
+/* Phone toolbar: two compact rows (Contents, Aa, Expand, Quiz / Search). Hides when you scroll down, returns when you scroll up. */
+@media (max-width: 560px) {
+  .toolbar, .toolbar * { line-height: 1.2 !important; letter-spacing: 0 !important; word-spacing: 0 !important; }
+  .toolbar button, .toolbar label, .toolbar input, .toolbar span, .toolbar select { font-size: 14px; }
+  .tbin { padding-block: .35rem; gap: .35rem .4rem; min-height: 0; flex-wrap: wrap; align-items: center; }
+  .toolbar .brand, .toolbar .progress, .toolbar .sync { display: none; }
+  .navbtn { order: 1; } .apbtn { order: 2; } .tbbtn { order: 3; margin-left: auto; } .switch { order: 4; margin-left: 0; }
+  .search { order: 5; flex: 1 1 100%; }
+  .apbtn .rt { display: none; }
+  .toolbar button, .toolbar .search input { padding: .28rem .55rem; }
+  .qm { display: none; }
+}
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+.toolbar { transition: transform .2s ease; }
+.toolbar.tbhide { transform: translateY(-110%); }
+@media (min-width: 561px) { .toolbar.tbhide { transform: none; } }
+html, body { margin: 0; }
 </style>
 <div class="toolbar"><div class="tbin">
 <a class="brand" href="#start">UKG-STE <span>Staff Prep</span></a>
@@ -2394,7 +2407,7 @@ List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
     var ap = document.createElement('button');
     ap.type = 'button'; ap.className = 'apbtn'; ap.id = 'apbtn';
     ap.setAttribute('aria-haspopup', 'dialog'); ap.setAttribute('aria-expanded', 'false'); ap.setAttribute('aria-controls', 'appanel');
-    ap.innerHTML = '<span aria-hidden="true">Aa</span> Reading theme';
+    ap.innerHTML = '<span aria-hidden="true">Aa</span><span class="rt"> Reading theme</span>';
     var prog = tb.querySelector('.navbtn');
     tb.insertBefore(ap, prog);
 
@@ -2866,6 +2879,19 @@ List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
   var fabTick = null;
   window.addEventListener('scroll', function () { if (fabTick) return; fabTick = setTimeout(function () { fabTick = null; syncFab(); }, 120); }, { passive: true });
   syncFab();
+
+  // ---------- phone toolbar: hide on scroll down, show on scroll up ----------
+  (function () {
+    var lastY = window.scrollY, ticking = false, mq = window.matchMedia('(max-width: 560px)');
+    function upd() {
+      ticking = false;
+      var y = window.scrollY, dy = y - lastY;
+      if (!mq.matches || y < 90 || toc.classList.contains('open') || document.activeElement === input) { tbEl.classList.remove('tbhide'); lastY = y; return; }
+      if (dy > 8) { tbEl.classList.add('tbhide'); lastY = y; }
+      else if (dy < -8) { tbEl.classList.remove('tbhide'); lastY = y; }
+    }
+    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(upd); } }, { passive: true });
+  })();
 
   // ---------- highlight the nav item for the current position ----------
   var curLink = null, curParent = null, spyTick = false;
