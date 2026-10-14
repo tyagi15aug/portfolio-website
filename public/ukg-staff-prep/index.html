@@ -710,6 +710,15 @@ html, body { margin: 0; }
   .tbl.stack td:first-child { font-weight: 700; padding-bottom: .3rem; }
   .tbl.stack td[data-label]:not(:first-child)::before { content: attr(data-label) ": "; color: var(--muted); font-size: .85em; font-weight: 600; }
 }
+
+/* colours from an image */
+.pk .pkdrop { border: 2px dashed var(--line); border-radius: 8px; padding: 1rem; text-align: center; font-size: .9em; color: var(--muted); margin: .4rem 0; }
+.pk .pkdrop.on, .pk .pkdrop:focus { border-color: var(--link); outline: none; }
+.pk input[type="url"] { flex: 1; min-width: 0; font: inherit; padding: .4rem .5rem; border: 1px solid var(--line); border-radius: 5px; background: var(--bg); color: var(--ink); }
+.pk input[type="file"] { max-width: 100%; font-size: .85em; }
+.pk .pkpal { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem; margin: .4rem 0; }
+.pk .pkpal i { width: 1.4rem; height: 1.4rem; border-radius: 4px; border: 1px solid var(--line); display: inline-block; }
+.pk .pkpal b { padding: 0 .2rem; color: var(--muted); }
 </style>
 <div class="toolbar"><div class="tbin">
 <a class="brand" href="#start">UKG-STE <span>Staff Prep</span></a>
@@ -2653,6 +2662,127 @@ List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
     });
     if (Object.keys(cu).length) mm.open = true;
     syncMM();
+
+    /* pick colours from an image: paste, drop, choose a file, or give an image link */
+    var pk = document.createElement('details'); pk.className = 'mm pk'; pk.id = 'pkimg';
+    pk.innerHTML = '<summary>Colours from an image</summary>' +
+      '<p class="xnote">Paste an image (Ctrl or Cmd + V), drop one here, choose a file, or give a direct image link. The page picks a palette and sets Mix and match for you.</p>' +
+      '<div class="pkdrop" id="pk-drop" tabindex="0">Paste or drop an image here</div>' +
+      '<div class="xrow"><input type="file" id="pk-file" accept="image/*" aria-label="Choose an image"></div>' +
+      '<div class="xrow"><input type="url" id="pk-url" placeholder="https://.../image.png" aria-label="Image link" spellcheck="false" autocapitalize="off"><button type="button" class="reset" id="pk-go">Use link</button></div>' +
+      '<div class="pkpal" id="pk-pal" aria-label="Colours found"></div>' +
+      '<div class="xrow"><button type="button" class="reset" id="pk-flip" hidden>Flip light and dark</button></div>' +
+      '<div class="xmsg" id="pk-msg" role="status"></div>';
+    panel.appendChild(pk);
+    function pmsg(t, bad) { var m = pk.querySelector('#pk-msg'); m.textContent = t; m.className = 'xmsg' + (bad ? ' bad' : ''); }
+    function hex2(n) { n = Math.max(0, Math.min(255, Math.round(n))); return (n < 16 ? '0' : '') + n.toString(16); }
+    function toHex(c) { return '#' + hex2(c[0]) + hex2(c[1]) + hex2(c[2]); }
+    function toHsl(c) {
+      var r = c[0] / 255, g = c[1] / 255, b = c[2] / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, h = 0, sa = 0, d = mx - mn;
+      if (d) { sa = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn); h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; }
+      return [h, sa, l];
+    }
+    function fromHsl(h, sa, l) {
+      function f(n) { var k = (n + h / 30) % 12, a = sa * Math.min(l, 1 - l); return 255 * (l - a * Math.max(-1, Math.min(k - 3, Math.min(9 - k, 1)))); }
+      return [f(0), f(8), f(4)];
+    }
+    /* move lightness away from the background until the contrast ratio is reached */
+    function fit(c, bgHex, min) {
+      var hsl = toHsl(c), bgDark = rl(bgHex) < 0.4, h = toHex(c), l = hsl[2], i = 0;
+      while (ratio(h, bgHex) < min && i++ < 60) { l += bgDark ? 0.02 : -0.02; if (l > 1 || l < 0) break; h = toHex(fromHsl(hsl[0], hsl[1], l)); }
+      if (ratio(h, bgHex) < min) h = bgDark ? '#ffffff' : '#111111';
+      return h;
+    }
+    /* median cut: split the pixel list into up to n boxes, return the average colour and weight of each */
+    function palette(px, n) {
+      var boxes = [px];
+      while (boxes.length < n) {
+        var bi = -1, br = 0;
+        boxes.forEach(function (b, i) {
+          if (b.length < 2) return;
+          for (var ch = 0; ch < 3; ch++) { var mn = 255, mx = 0; b.forEach(function (p) { if (p[ch] < mn) mn = p[ch]; if (p[ch] > mx) mx = p[ch]; }); if ((mx - mn) * Math.sqrt(b.length) > br) { br = (mx - mn) * Math.sqrt(b.length); bi = i; } }
+        });
+        if (bi < 0) break;
+        var b = boxes[bi], best = 0, bestR = -1;
+        for (var c = 0; c < 3; c++) { var lo = 255, hi = 0; b.forEach(function (p) { if (p[c] < lo) lo = p[c]; if (p[c] > hi) hi = p[c]; }); if (hi - lo > bestR) { bestR = hi - lo; best = c; } }
+        b.sort(function (x, y) { return x[best] - y[best]; });
+        var mid = b.length >> 1; boxes.splice(bi, 1, b.slice(0, mid), b.slice(mid));
+      }
+      return boxes.filter(function (b) { return b.length; }).map(function (b) {
+        var s = [0, 0, 0]; b.forEach(function (p) { s[0] += p[0]; s[1] += p[1]; s[2] += p[2]; });
+        return { c: [s[0] / b.length, s[1] / b.length, s[2] / b.length], w: b.length / px.length };
+      }).sort(function (a, b) { return b.w - a.w; });
+    }
+    var lastPal = null, flipped = false;
+    function assign(pal, flip) {
+      var dom = pal[0].c, hsl = toHsl(dom);
+      var bgHsl = hsl.slice();
+      if (flip) bgHsl[2] = hsl[2] < 0.5 ? 0.94 : 0.1;
+      /* keep the background calm: limit saturation, avoid mid greys */
+      bgHsl[1] = Math.min(bgHsl[1], 0.35);
+      if (bgHsl[2] > 0.3 && bgHsl[2] < 0.7) bgHsl[2] = bgHsl[2] < 0.5 ? 0.14 : 0.93;
+      var bg = toHex(fromHsl(bgHsl[0], bgHsl[1], bgHsl[2]));
+      var sat = pal.filter(function (p) { var h = toHsl(p.c); return h[1] > 0.25 && h[2] > 0.15 && h[2] < 0.9; }).sort(function (a, b) { return toHsl(b.c)[1] * (0.5 + b.w) - toHsl(a.c)[1] * (0.5 + a.w); });
+      var neutral = pal.map(function (p) { return p.c; });
+      var inkSrc = neutral.slice().sort(function (a, b) { return toHsl(a)[1] - toHsl(b)[1]; })[0];   /* body text: the least saturated colour, pushed to enough contrast */
+      var ink = fit(inkSrc, bg, 7);
+      var acc = sat[0] ? fit(sat[0].c, bg, 3.2) : fit(inkSrc, bg, 4.5);
+      var lnk = sat[1] ? fit(sat[1].c, bg, 4.5) : fit(sat[0] ? sat[0].c : inkSrc, bg, 4.5);
+      var hd = sat[2] ? fit(sat[2].c, bg, 4.5) : ink;
+      return { bg: bg, ink: ink, accent: acc, link: lnk, hd: hd };
+    }
+    function applyPal(flip) {
+      var a = assign(lastPal, flip);
+      cu.bg = a.bg; cu.ink = a.ink; cu.accent = a.accent; cu.link = a.link; cu.hd = a.hd;
+      after(); mm.open = true;
+      var box = pk.querySelector('#pk-pal');
+      box.innerHTML = lastPal.map(function (p) { return '<i style="background:' + toHex(p.c) + '" title="' + toHex(p.c) + '"></i>'; }).join('') + '<b>&rarr;</b>' + ['bg', 'ink', 'hd', 'accent', 'link'].map(function (k) { return '<i style="background:' + a[k] + '" title="' + k + ' ' + a[k] + '"></i>'; }).join('');
+      pk.querySelector('#pk-flip').hidden = false;
+      pmsg('Applied. Text on background: ' + ratio(a.ink, a.bg).toFixed(1) + ' to 1. Fine tune it under Mix and match.');
+    }
+    function fromImage(img) {
+      var W = 64, sc = Math.min(1, W / Math.max(img.naturalWidth, img.naturalHeight)), w = Math.max(1, Math.round(img.naturalWidth * sc)), h = Math.max(1, Math.round(img.naturalHeight * sc));
+      var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+      var ctx = cv.getContext('2d', { willReadFrequently: true }); ctx.drawImage(img, 0, 0, w, h);
+      var d;
+      try { d = ctx.getImageData(0, 0, w, h).data; } catch (e) { pmsg('The site does not allow reading this image. Save it, then paste or choose the file.', true); return; }
+      var px = []; for (var i = 0; i < d.length; i += 4) if (d[i + 3] > 128) px.push([d[i], d[i + 1], d[i + 2]]);
+      if (px.length < 4) { pmsg('This image has no visible pixels.', true); return; }
+      lastPal = palette(px, 8); flipped = false; applyPal(false);
+    }
+    function loadBlob(blob) {
+      if (!blob || !/^image\//.test(blob.type)) { pmsg('That is not an image.', true); return; }
+      var u = URL.createObjectURL(blob), im = new Image();
+      im.onload = function () { fromImage(im); URL.revokeObjectURL(u); };
+      im.onerror = function () { pmsg('This image could not be read.', true); URL.revokeObjectURL(u); };
+      im.src = u;
+    }
+    function loadUrl(url) {
+      url = String(url || '').trim();
+      if (!/^https?:\/\//i.test(url)) { pmsg('Give a full link that starts with http or https.', true); return; }
+      var im = new Image(); im.crossOrigin = 'anonymous';
+      im.onload = function () { fromImage(im); };
+      im.onerror = function () { pmsg('Could not load an image from that link. A web page link does not work: browsers do not let a page read other sites. Paste a screenshot instead, or use a direct image link.', true); };
+      pmsg('Loading...'); im.src = url;
+    }
+    pk.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      if (b.id === 'pk-go') loadUrl(pk.querySelector('#pk-url').value);
+      else if (b.id === 'pk-flip' && lastPal) { flipped = !flipped; applyPal(flipped); }
+    });
+    pk.querySelector('#pk-url').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); loadUrl(e.target.value); } });
+    pk.querySelector('#pk-file').addEventListener('change', function (e) { loadBlob(e.target.files && e.target.files[0]); e.target.value = ''; });
+    var drop = pk.querySelector('#pk-drop');
+    ['dragenter', 'dragover'].forEach(function (n) { drop.addEventListener(n, function (e) { e.preventDefault(); drop.classList.add('on'); }); });
+    ['dragleave', 'drop'].forEach(function (n) { drop.addEventListener(n, function (e) { e.preventDefault(); drop.classList.remove('on'); }); });
+    drop.addEventListener('drop', function (e) { var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f) loadBlob(f); else { var t = e.dataTransfer && e.dataTransfer.getData('text/uri-list'); if (t) loadUrl(t.split('\n')[0]); } });
+    document.addEventListener('paste', function (e) {
+      if (panel.hidden || !pk.open) return;
+      var cd = e.clipboardData; if (!cd) return;
+      var items = cd.items || [];
+      for (var i = 0; i < items.length; i++) if (items[i].kind === 'file' && /^image\//.test(items[i].type)) { e.preventDefault(); loadBlob(items[i].getAsFile()); return; }
+      var t = cd.getData('text'); if (t && /^https?:\/\//i.test(t.trim()) && e.target.id !== 'pk-url' && e.target.id !== 'xf-in') { e.preventDefault(); pk.querySelector('#pk-url').value = t.trim(); loadUrl(t); }
+    });
     function sync() {
       Array.prototype.forEach.call(panel.querySelectorAll('[data-skin]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-skin') === st.skin)); });
       var mp = modePref();
