@@ -16,9 +16,11 @@ export function Hero() {
       <p className={styles.role}>Senior Full-Stack Developer</p>
 
       <p className={styles.summary}>
-        16 years building enterprise web applications and the production tools behind them &mdash; frontend
-        platforms, GraphQL/API layers, CI/CD, and observability. Lately building AI-augmented engineering tools,
-        including a self-healing test system that fine-tunes a local LLM to trace CI failures to root cause.
+        16 years building enterprise web applications &mdash; with Vue, React, TypeScript, and Node.js &mdash; and
+        the production tools behind them. Owns core platform modules, CI/CD pipelines, and observability
+        dashboards, leading projects end-to-end and mentoring engineers. Lately building AI-augmented engineering
+        tools, including a self-healing test system that fine-tunes a local LLM to trace CI failures to root
+        cause.
       </p>
 
       <div className={styles.statRow}>
@@ -31,8 +33,8 @@ export function Hero() {
           <span className={styles.statLabel}>companies</span>
         </div>
         <div className={styles.stat}>
-          <span className={styles.statValue}>25+</span>
-          <span className={styles.statLabel}>AWS-compatible services shipped</span>
+          <span className={styles.statValue}>14+</span>
+          <span className={styles.statLabel}>AWS-API-compatible services shipped</span>
         </div>
       </div>
 

@@ -10,10 +10,11 @@ export const experience: RoleEntry[] = [
     end: 'Present',
     featured: true,
     bullets: [
-      'Built a self-healing test tool powered by a locally fine-tuned LLM (Gemma, via Ollama) that traces Cypress CI failures to root cause — cut the time to tell a flaky test from a real bug by roughly 15x.',
-      "Owned front-end delivery for the platform's most-used microfrontends (EC2, VPC, IAM, Kubernetes, Secrets Manager), used by around 20 internal teams across Samsung.",
-      "Built and evolved the platform's Node.js GraphQL layer over 8 years across roughly 25 AWS-compatible services, instrumented for real-time Prometheus/Grafana visibility.",
-      'Migrated CI/CD from Jenkins to GitHub Actions and delivered a Python release-management tool that cut release time by more than 10x.',
+      "Engineered the frontend and backend API layer for Samsung's AWS-API-compatible private cloud platform (Vue 3, Pinia, Nuxt, Node.js, GraphQL) — owned the platform's most-used microfrontends (EC2, VPC, IAM, Lambda, Kubernetes, Secrets Manager), used by around 20 internal teams across Samsung.",
+      "Owned and evolved the Node.js GraphQL layer over 7 years across 14+ AWS-API-compatible services, instrumenting error-rate and latency tracking for real-time Prometheus/Grafana visibility.",
+      'Built a self-healing test tool — a locally fine-tuned LLM (Gemma, via Ollama) with RAG over a vector database — that traces Cypress CI failures to root cause using run history and CI logs, cutting the time to tell a flaky test from a real bug by roughly 15x with AI-suggested fixes ~70% accurate.',
+      'Migrated CI/CD from Jenkins to GitHub Actions and delivered a Python release-management tool — CLI first, later a full UI built with Claude Code — that cut release time by more than 10x.',
+      'Ran technical hiring loops and ramp plans for new engineers and interns.',
     ],
   },
   {
