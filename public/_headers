@@ -1,0 +1,12 @@
+/prep
+  X-Robots-Tag: noindex, nofollow
+/prep/*
+  X-Robots-Tag: noindex, nofollow
+/capital-one-prep
+  X-Robots-Tag: noindex, nofollow
+/capital-one-prep/*
+  X-Robots-Tag: noindex, nofollow
+/ukg-staff-prep
+  X-Robots-Tag: noindex, nofollow
+/ukg-staff-prep/*
+  X-Robots-Tag: noindex, nofollow

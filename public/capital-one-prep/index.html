@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<style>:root{color-scheme:light}body{margin:0;font-size:14px}</style>
+<title>Capital One CodeSignal Prep</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: single reading column, one section per prep day, checklist rows with ID / title / evidence tags. */
+:root{
+  --bg:#f4f6f8; --surface:#ffffff; --fg:#14202b; --muted:#5b6b7a; --line:#d9e0e6;
+  --accent:#0b6e4f; --accent-soft:#dff1ea; --warn:#9a4a08; --warn-soft:#fbeadb;
+  --sans:"Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1519; --surface:#151e24; --fg:#e6edf2; --muted:#93a4b2; --line:#25323b;
+  --accent:#4cc9a0; --accent-soft:#143229; --warn:#f0a35e; --warn-soft:#33200f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1519; --surface:#151e24; --fg:#e6edf2; --muted:#93a4b2; --line:#25323b;
+  --accent:#4cc9a0; --accent-soft:#143229; --warn:#f0a35e; --warn-soft:#33200f; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5;
+  padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1{font-size:clamp(26px,5vw,34px);line-height:1.1;margin:0;letter-spacing:-.01em;text-wrap:balance}
+h2{font-size:17px;margin:0;text-wrap:balance}
+p{margin:0}
+.sub{color:var(--muted);margin-top:8px;max-width:62ch}
+.facts{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:16px;font-size:13px;color:var(--muted)}
+.facts b{color:var(--fg);font-weight:600}
+.bar{display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.bar-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.count{font-family:var(--mono);font-size:14px}
+.track{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--accent);transition:width .25s}
+.toggle{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);cursor:pointer}
+.toggle input{accent-color:var(--accent);width:16px;height:16px}
+.key{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:var(--muted)}
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:4px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tag.rep{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.tag.tg{border-color:var(--accent);color:var(--accent)}
+.tag.prem{border-color:var(--warn);color:var(--warn)}
+.day{display:flex;flex-direction:column;gap:10px}
+.day-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;padding-bottom:8px;border-bottom:2px solid var(--fg)}
+.date{font-family:var(--mono);font-size:13px}
+.today{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--warn-soft);color:var(--warn);padding:2px 7px;border-radius:4px}
+.goal{color:var(--muted);font-size:14px}
+.list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;background:var(--surface);overflow:hidden}
+.row{display:grid;grid-template-columns:auto 56px 1fr;gap:4px 12px;padding:11px 14px;border-top:1px solid var(--line);cursor:pointer;align-items:start}
+.row:first-child{border-top:0}
+.row input{accent-color:var(--accent);width:18px;height:18px;margin:2px 0 0}
+.row:focus-within{outline:2px solid var(--accent);outline-offset:-2px}
+.id{font-family:var(--mono);font-size:13px;padding-top:2px}
+.main{min-width:0;display:flex;flex-direction:column;gap:3px}
+.title{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+.title a{color:var(--fg);font-weight:600;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.title a:hover{text-decoration-color:var(--accent)}
+.note{font-size:13px;color:var(--muted)}
+.row.done .title a{color:var(--muted);text-decoration:line-through}
+.row.stretch .title a{font-weight:400}
+.hide-stretch .row.stretch{display:none}
+.rules{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.rules ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.rules li::marker{color:var(--accent)}
+.spare{font-size:14px;color:var(--muted)}
+.spare a{color:var(--fg)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<div class="wrap" id="app">
+  <header>
+    <h1>Capital One CodeSignal Prep</h1>
+    <p class="sub">Full Stack Engineer 5, Global Workforce Services. A seven-day plan built from candidate reports of Capital One's assessment and the Capital One question tags on LeetCode.</p>
+    <div class="facts">
+      <span><b>Format</b> 4 questions, 70 min, proctored</span>
+      <span><b>Language</b> JavaScript</span>
+      <span><b>Test day</b> Fri Nov 13</span>
+      <span><b>Invite expires</b> about Nov 14, check your email</span>
+    </div>
+  </header>
+
+  <div class="bar">
+    <div class="bar-top"><span class="count" id="count">0 / 0 done</span>
+      <label class="toggle" for="mustOnly"><input type="checkbox" id="mustOnly"> Show core problems only</label></div>
+    <div class="track"><div class="fill" id="fill"></div></div>
+  </div>
+
+  <div class="key">
+    <span><span class="tag rep">Reported</span> a candidate described this problem or a close variant</span>
+    <span><span class="tag tg">Tagged</span> in Capital One's LeetCode company tag</span>
+    <span><span class="tag">Drill</span> builds a skill the reports point to</span>
+  </div>
+
+  <div id="days" style="display:flex;flex-direction:column;gap:28px"></div>
+
+  <section class="rules" aria-labelledby="rt">
+    <h2 id="rt">Fri Nov 13: test day</h2>
+    <ul>
+      <li>Start by early evening. It cannot be paused, and you will be tired at midnight. Treat Sat Nov 14 as a backup for webcam or ID trouble, not a retake.</li>
+      <li>Read all four questions first (two minutes). Reports put the easy ones at 1 and 2 and vary on 3 and 4, so judge by the statements.</li>
+      <li>Budget about 8 / 12 / 20 / 25 minutes, 5 to review. Get 1 and 2 fully correct before anything else.</li>
+      <li>On a hard question, submit the brute force first. Hidden tests give partial credit and reports say partial on the last question can still pass.</li>
+      <li>Matrix commands: build a new matrix instead of rotating in place. Pair counting: check duplicates and equal strings.</li>
+      <li>Run every example, then empty, single-element, duplicate and boundary inputs.</li>
+    </ul>
+  </section>
+
+  <p class="spare"><b>If you finish early:</b>
+    <a href="https://leetcode.com/problems/3sum/">15 3Sum</a>,
+    <a href="https://leetcode.com/problems/container-with-most-water/">11 Container With Most Water</a>,
+    <a href="https://leetcode.com/problems/group-anagrams/">49 Group Anagrams</a>,
+    <a href="https://leetcode.com/problems/longest-consecutive-sequence/">128 Longest Consecutive Sequence</a>,
+    <a href="https://leetcode.com/problems/text-justification/">68 Text Justification</a>,
+    <a href="https://leetcode.com/problems/trapping-rain-water/">42 Trapping Rain Water</a>.
+    Skip the advanced hards in Capital One's tag, such as 3161 and 3072.</p>
+</div>
+
+<script>
+// pri: 1 = core, 2 = stretch. tags: R reported, T tagged, D drill, P premium.
+var DAYS=[
+{d:"Fri Nov 6",iso:"2026-11-06",t:"Matrix commands and rotations",g:"Reported in the June 2026 and earlier assessments. Write each one with a new matrix first.",p:[
+ [48,"rotate-image","Rotate Image","RT",1,"Matches the reported row-reverse, swap, rotate-90 command list."],
+ [54,"spiral-matrix","Spiral Matrix","T",1,"Top overall in the Capital One tag."],
+ [498,"diagonal-traverse","Diagonal Traverse","D",1,"Index arithmetic on diagonals."],
+ [1861,"rotating-the-box","Rotating the Box","T",1,"Rotation plus simulation."],
+ [1329,"sort-the-matrix-diagonally","Sort the Matrix Diagonally","R",2,"Close to a reported diagonal-sort question."],
+ [59,"spiral-matrix-ii","Spiral Matrix II","D",2,""],
+ [73,"set-matrix-zeroes","Set Matrix Zeroes","D",2,""],
+ [289,"game-of-life","Game of Life","D",2,"Multi-state grid simulation."]]},
+{d:"Sat Nov 7",iso:"2026-11-07",t:"Hash maps, pairs and strings",g:"The easy questions and the reported pair-counting question.",p:[
+ [2023,"number-of-pairs-of-strings-with-concatenation-equal-to-target","Number of Pairs of Strings With Concatenation Equal to Target","RT",1,"Reported as Q4 in June 2026. Brute force is too slow, duplicates trip people up."],
+ [3043,"find-the-length-of-the-longest-common-prefix","Find the Length of the Longest Common Prefix","RT",1,"Matches the reported shared-prefix across two arrays question."],
+ [443,"string-compression","String Compression","RT",1,"July 2026 variant keeps the last or max occurrence."],
+ [1554,"strings-differ-by-one-character","Strings Differ by One Character","R",1,"Closest to the reported one-digit-different pair count. Premium problem."],
+ [3448,"count-substrings-divisible-by-last-digit","Count Substrings Divisible by Last Digit","R",1,"Closest to the reported divisible-substring question."],
+ [1,"two-sum","Two Sum","D",2,"Warm-up."],
+ [1814,"count-nice-pairs-in-an-array","Count Nice Pairs in an Array","T",2,""],
+ [1743,"restore-the-array-from-adjacent-pairs","Restore the Array From Adjacent Pairs","T",2,""]]},
+{d:"Sun Nov 8",iso:"2026-11-08",t:"Subarrays, windows and prefix sums",g:"Counting patterns over arrays, including the circular and up/flat/down reports.",p:[
+ [560,"subarray-sum-equals-k","Subarray Sum Equals K","D",1,"Prefix sum with a hash map."],
+ [3034,"number-of-subarrays-that-match-a-pattern-i","Number of Subarrays That Match a Pattern I","RT",1,"Matches the reported up/flat/down count."],
+ [3101,"count-alternating-subarrays","Count Alternating Subarrays","RT",1,""],
+ [3208,"alternating-groups-ii","Alternating Groups II","RT",1,"Circular alternating array."],
+ [3,"longest-substring-without-repeating-characters","Longest Substring Without Repeating Characters","D",1,"Variable window."],
+ [3105,"longest-strictly-increasing-or-strictly-decreasing-subarray","Longest Strictly Increasing or Decreasing Subarray","R",2,"Closest to the reported monotonic triplets."],
+ [1438,"longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit","Longest Continuous Subarray With Absolute Diff ≤ Limit","T",2,"Window with a monotonic deque."],
+ [2672,"number-of-adjacent-elements-with-the-same-color","Number of Adjacent Elements With the Same Color","T",2,""]]},
+{d:"Mon Nov 9",iso:"2026-11-09",t:"Intervals, sweeps and stacks",g:"The July 2026 lamp question and the histogram question.",p:[
+ [2021,"brightest-position-on-street","Brightest Position on Street","RT",1,"July 2026 variant asks for areas covered by exactly one lamp. Difference array or sweep."],
+ [2237,"count-positions-on-street-with-required-brightness","Count Positions on Street With Required Brightness","RT",1,""],
+ [56,"merge-intervals","Merge Intervals","T",1,""],
+ [739,"daily-temperatures","Daily Temperatures","D",1,"Monotonic stack warm-up for 84."],
+ [84,"largest-rectangle-in-histogram","Largest Rectangle in Histogram","RT",1,"Reported as Q4. The O(n²) version still earns partial credit."],
+ [71,"simplify-path","Simplify Path","T",2,""],
+ [539,"minimum-time-difference","Minimum Time Difference","T",2,""],
+ [57,"insert-interval","Insert Interval","D",2,""],
+ [20,"valid-parentheses","Valid Parentheses","D",2,"Warm-up."]]},
+{d:"Tue Nov 10",iso:"2026-11-10",t:"Grid DP and grid search",g:"Minimum path sum was Q3 in July 2026. Spoilage spreading was also reported.",p:[
+ [64,"minimum-path-sum","Minimum Path Sum","R",1,"Matches the reported robot minimum path."],
+ [62,"unique-paths","Unique Paths","R",1,""],
+ [994,"rotting-oranges","Rotting Oranges","R",1,"Matches the reported spoilage spreading question."],
+ [200,"number-of-islands","Number of Islands","T",1,""],
+ [1091,"shortest-path-in-binary-matrix","Shortest Path in Binary Matrix","D",2,"Maze-style BFS."],
+ [733,"flood-fill","Flood Fill","T",2,""],
+ [300,"longest-increasing-subsequence","Longest Increasing Subsequence","D",2,"One DP beyond the grid."]]},
+{d:"Wed Nov 11",iso:"2026-11-11",t:"Class design and simulation",g:"Same shape as the Power Day coding round: a class that gains features level by level.",p:[
+ [2043,"simple-bank-system","Simple Bank System","RT",1,"Highest-frequency Capital One tag. Mirrors the reported bank-system Power Day task."],
+ [1166,"design-file-system","Design File System","T",1,""],
+ [146,"lru-cache","LRU Cache","D",1,""],
+ [1396,"design-underground-system","Design Underground System","D",1,""],
+ [723,"candy-crush","Candy Crush","T",1,"Simulation."],
+ [2502,"design-memory-allocator","Design Memory Allocator","T",2,""],
+ [981,"time-based-key-value-store","Time Based Key-Value Store","D",2,""],
+ [588,"design-in-memory-file-system","Design In-Memory File System","DP",2,"Premium problem. The level-by-level pattern in its hardest form."]]},
+{d:"Thu Nov 12",iso:"2026-11-12",t:"Timed mock and setup check",g:"No new problems today.",p:[
+ [0,"","70-minute mock: 4 unseen problems, order 1, 2, 4, 3","D",1,"Use a CodeSignal practice test, or pick two easy and two medium problems from the earlier days that you skipped."],
+ [0,"","Redo your three slowest problems from the week","D",1,""],
+ [0,"","Check webcam, microphone, photo ID, screen sharing and a quiet room","D",1,"Close other apps and tabs. Keep a plain JS template ready."]]}
+];
+var KEY="c1prep-v1",state={};
+try{state=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){state={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+var todayIso=(function(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)})();
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e}
+var host=document.getElementById("days");
+DAYS.forEach(function(day,di){
+  var s=el("section","day"),head=el("div","day-head");
+  head.appendChild(el("span","date",day.d));
+  head.appendChild(el("h2","",day.t));
+  if(day.iso===todayIso)head.appendChild(el("span","today","Today"));
+  s.appendChild(head);s.appendChild(el("p","goal",day.g));
+  var list=el("div","list");
+  day.p.forEach(function(p,pi){
+    var id="d"+di+"p"+pi,row=el("label","row"+(p[4]===2?" stretch":""));row.setAttribute("for",id);
+    var cb=el("input");cb.type="checkbox";cb.id=id;cb.checked=!!state[id];
+    cb.addEventListener("change",function(){state[id]=cb.checked;save();row.classList.toggle("done",cb.checked);update()});
+    row.classList.toggle("done",cb.checked);
+    var tags="";if(p[3].indexOf("R")>-1)tags+='<span class="tag rep">Reported</span>';
+    if(p[3].indexOf("T")>-1)tags+='<span class="tag tg">Tagged</span>';
+    if(p[3]==="D"||p[3]==="DP")tags+='<span class="tag">Drill</span>';
+    if(p[3].indexOf("P")>-1&&p[3]!=="RT"&&p[3]!=="DP"||p[3]==="DP")tags+='<span class="tag prem">Premium</span>';
+    var link=p[1]?'<a href="https://leetcode.com/problems/'+p[1]+'/" target="_blank" rel="noopener">'+p[2]+'</a>':'<a style="pointer-events:none;text-decoration:none">'+p[2]+'</a>';
+    var main=el("div","main");
+    main.appendChild(el("div","title",link+tags));
+    if(p[5])main.appendChild(el("div","note",p[5]));
+    row.appendChild(cb);row.appendChild(el("span","id",p[0]?String(p[0]):"—"));row.appendChild(main);
+    list.appendChild(row);
+  });
+  s.appendChild(list);host.appendChild(s);
+});
+function update(){
+  var all=document.querySelectorAll(".row input"),done=0,n=0,must=document.getElementById("mustOnly").checked;
+  all.forEach(function(c){var stretch=c.closest(".row").classList.contains("stretch");if(must&&stretch)return;n++;if(c.checked)done++});
+  document.getElementById("count").textContent=done+" / "+n+" done";
+  document.getElementById("fill").style.width=(n?100*done/n:0)+"%";
+}
+document.getElementById("mustOnly").addEventListener("change",function(){
+  document.getElementById("app").classList.toggle("hide-stretch",this.checked);update()});
+update();
+</script>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Interview Prep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one narrow column, a heading and a list of prep guides as full-width link rows. */
+:root{
+  --bg:#eef1f3; --surface:#ffffff; --ink:#142028; --muted:#55636d; --line:#cbd3d9;
+  --accent:#b4520c; --link:#0d5c8c;
+  --f-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --f-body:"Source Sans 3","Segoe UI",system-ui,-apple-system,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d1317; --surface:#141c22; --ink:#e3e9ed; --muted:#94a3ad; --line:#283640;
+  --accent:#f08a3c; --link:#6cb8ea; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1317; --surface:#141c22; --ink:#e3e9ed; --muted:#94a3ad; --line:#283640;
+  --accent:#f08a3c; --link:#6cb8ea; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  padding-block:calc(40px + env(safe-area-inset-top,0px)) calc(56px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(34px,7vw,46px);line-height:1;margin:0;letter-spacing:.01em;text-transform:uppercase}
+.lede{margin:10px 0 0;color:var(--muted);max-width:56ch}
+ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+a.guide{display:flex;flex-direction:column;gap:6px;padding:16px 18px;background:var(--surface);border:1px solid var(--line);
+  border-radius:10px;color:inherit;text-decoration:none}
+a.guide:hover{border-color:var(--accent)}
+a.guide:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.meta{font-family:var(--f-mono);font-size:12px;color:var(--accent);letter-spacing:.02em}
+.name{font-family:var(--f-display);font-weight:700;font-size:24px;line-height:1.1;text-wrap:balance}
+.desc{color:var(--muted);font-size:15px}
+.path{font-family:var(--f-mono);font-size:12px;color:var(--link)}
+</style>
+<main>
+  <header>
+    <h1>Interview Prep</h1>
+    <p class="lede">Study guides for the interviews and assessments I'm preparing for, one page each.</p>
+  </header>
+  <ul>
+    <li>
+      <a class="guide" href="/capital-one-prep/">
+        <span class="meta">Capital One · Full Stack Engineer 5 · CodeSignal assessment</span>
+        <span class="name">Capital One CodeSignal Prep</span>
+        <span class="desc">Seven-day LeetCode checklist built from candidate reports and Capital One's question tags, plus test-day rules.</span>
+        <span class="path">/capital-one-prep/</span>
+      </a>
+    </li>
+    <li>
+      <a class="guide" href="/ukg-staff-prep/">
+        <span class="meta">UKG · Staff Engineer · Interview rounds</span>
+        <span class="name">UKG Staff Prep Guide</span>
+        <span class="desc">Question bank and study notes for the development and DevOps rounds, including AI in production.</span>
+        <span class="path">/ukg-staff-prep/</span>
+      </a>
+    </li>
+  </ul>
+</main>
